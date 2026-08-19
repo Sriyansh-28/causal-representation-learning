@@ -1,0 +1,41 @@
+# Experiment 2 -- effect of confounding strength.
+#
+# Uses the synthetic DGP because IHDP's confounding level is fixed and cannot
+# be varied. `confounding_strength` (gamma) scales how strongly the five
+# confounders drive treatment assignment:
+#   e(x) = sigmoid(a0 + gamma * (x[:, :5] @ w))
+# gamma = 0 is a randomized trial (no confounding, perfect overlap); larger
+# gamma pushes propensities toward 0/1, creating selection bias and weakening
+# positivity. The intercept a0 is re-solved at every gamma so the marginal
+# treated fraction stays at 0.5 -- confounding varies while imbalance does not.
+name: confounding
+experiment: confounding
+output_dir: results
+
+dataset:
+  name: synthetic
+  n_train: 2000
+  n_test: 2000
+  d: 20
+  n_confounders: 5
+  target_treated_fraction: 0.5
+  noise_std: 1.0
+
+models: [s_learner, t_learner, x_learner, neural_rep]
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+conditions:
+  confounding_strengths: [0.0, 1.0, 2.0, 3.0]
+
+neural:
+  hidden_dims: [64, 64]
+  latent_dim: 32
+  head_hidden_dims: [32]
+  dropout: 0.1
+  weight_decay: 0.0001
+  lr: 0.001
+  batch_size: 128
+  epochs: 200
+  val_fraction: 0.2
+  early_stopping: true
+  patience: 30

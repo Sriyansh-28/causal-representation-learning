@@ -1,0 +1,31 @@
+# Experiment 1 -- baseline comparison of all four learners on IHDP.
+# Replicate seeds index the 100 independent IHDP outcome realizations, so each
+# seed is a genuinely different draw of the response surfaces (not just a
+# different model initialisation).
+name: baseline_ihdp
+experiment: baseline
+output_dir: results
+
+dataset:
+  name: ihdp
+
+models:
+  - s_learner
+  - t_learner
+  - x_learner
+  - neural_rep
+
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+neural:
+  hidden_dims: [64, 64]
+  latent_dim: 32
+  head_hidden_dims: [32]
+  dropout: 0.1
+  weight_decay: 0.0001
+  lr: 0.001
+  batch_size: 128
+  epochs: 200
+  val_fraction: 0.2
+  early_stopping: true
+  patience: 30
