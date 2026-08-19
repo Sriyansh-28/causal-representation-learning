@@ -8,6 +8,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Dict, List, Sequence
 
+import numpy as np
 import pandas as pd
 
 from ..evaluation.statistics import holm_bonferroni, paired_test, summarize
@@ -53,7 +54,12 @@ def pivot_table(agg: pd.DataFrame, metric: str) -> pd.DataFrame:
     if sub.empty:
         return pd.DataFrame()
     sub = sub.assign(
-        summary=sub.apply(lambda r: f"{r['mean']:.3f} ± {r['std']:.3f}", axis=1)
+        summary=sub.apply(
+            lambda r: f"{r['mean']:.3f} ± {r['std']:.3f} (med {r['median']:.3f})"
+            if "median" in sub.columns and np.isfinite(r.get("median", float("nan")))
+            else f"{r['mean']:.3f} ± {r['std']:.3f}",
+            axis=1,
+        )
     )
     return sub.pivot_table(
         index=["condition", "condition_value"], columns="model",

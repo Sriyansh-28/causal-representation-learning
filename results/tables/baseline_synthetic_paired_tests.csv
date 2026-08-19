@@ -1,0 +1,4 @@
+condition,condition_value,metric,reference,comparison,n_pairs,mean_diff,median_diff,statistic,p_value,reject_h0_holm_0.05
+baseline,default,pehe,neural_rep,s_learner,30,-0.05949205934342953,-0.0707196966451886,31.0,4.421919584274292e-06,True
+baseline,default,pehe,neural_rep,t_learner,30,-0.41697521557480866,-0.41226535342245074,0.0,1.862645149230957e-09,True
+baseline,default,pehe,neural_rep,x_learner,30,-0.008207034535386255,-0.01831197364876383,164.0,0.1641840822994709,False

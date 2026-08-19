@@ -149,6 +149,14 @@ def test_summarize_reports_dispersion():
     assert out["n"] == 3
 
 
+def test_summarize_reports_median_and_iqr():
+    # A single large outlier moves the mean but not the median.
+    out = summarize([1.0, 2.0, 3.0, 100.0])
+    assert out["median"] == pytest.approx(2.5)
+    assert out["iqr"] == pytest.approx(25.5)
+    assert out["mean"] > out["median"]
+
+
 def test_summarize_handles_a_single_observation():
     out = summarize([5.0])
     assert out["mean"] == pytest.approx(5.0)

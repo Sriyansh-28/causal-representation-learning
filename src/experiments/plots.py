@@ -156,7 +156,11 @@ def plot_cate_error_distribution(df: pd.DataFrame, out_path: Path) -> Optional[P
     if not data:
         return None
     fig, ax = plt.subplots(figsize=(5.5, 3.6))
-    ax.boxplot(data, labels=[_label(m) for m in models][: len(data)], showmeans=True)
+    # `tick_labels` replaced `labels` in matplotlib 3.9; set them separately so
+    # the figure code works on both.
+    ax.boxplot(data, showmeans=True)
+    ax.set_xticks(range(1, len(data) + 1))
+    ax.set_xticklabels([_label(m) for m in models][: len(data)])
     ax.set_ylabel("PEHE")
     ax.set_title("Per-replicate PEHE distribution")
     plt.setp(ax.get_xticklabels(), rotation=15)

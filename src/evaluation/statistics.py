@@ -37,13 +37,20 @@ def summarize(values: Sequence[float], seed: int = 0) -> Dict[str, float]:
     v = np.asarray(values, dtype=np.float64)
     v = v[np.isfinite(v)]
     if v.size == 0:
-        return {"mean": float("nan"), "std": float("nan"), "sem": float("nan"), "n": 0,
+        return {"mean": float("nan"), "std": float("nan"), "sem": float("nan"),
+                "median": float("nan"), "iqr": float("nan"), "n": 0,
                 "ci_low": float("nan"), "ci_high": float("nan")}
     lo, hi = bootstrap_ci(v, seed=seed)
+    q25, q75 = np.quantile(v, [0.25, 0.75])
     return {
         "mean": float(v.mean()),
         "std": float(v.std(ddof=1)) if v.size > 1 else 0.0,
         "sem": float(stats.sem(v)) if v.size > 1 else 0.0,
+        # Per-replicate errors are strongly right-skewed on IHDP, where a few
+        # realizations have very large outcome scales. The median and IQR
+        # describe the typical replicate; the mean does not.
+        "median": float(np.median(v)),
+        "iqr": float(q75 - q25),
         "n": int(v.size),
         "ci_low": lo,
         "ci_high": hi,
