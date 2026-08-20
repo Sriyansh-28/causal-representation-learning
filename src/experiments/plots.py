@@ -161,7 +161,11 @@ def plot_cate_error_distribution(df: pd.DataFrame, out_path: Path) -> Optional[P
     ax.boxplot(data, showmeans=True)
     ax.set_xticks(range(1, len(data) + 1))
     ax.set_xticklabels([_label(m) for m in models][: len(data)])
-    ax.set_ylabel("PEHE")
+    ax.set_ylabel("PEHE (log scale)")
+    # Per-replicate PEHE spans orders of magnitude on IHDP; on a linear axis the
+    # outlier replicates flatten every box into an unreadable sliver.
+    if np.min(np.concatenate(data)) > 0:
+        ax.set_yscale("log")
     ax.set_title("Per-replicate PEHE distribution")
     plt.setp(ax.get_xticklabels(), rotation=15)
     fig.savefig(out_path, bbox_inches="tight")
