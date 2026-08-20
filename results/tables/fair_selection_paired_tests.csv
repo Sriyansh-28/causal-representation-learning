@@ -1,0 +1,16 @@
+condition,condition_value,metric,reference,comparison,n_pairs,mean_diff,median_diff,statistic,p_value,reject_h0_holm_0.05
+scenario,ihdp_baseline,pehe,neural_rep,s_learner,30,-2.7152104872911864,-0.6690069218611125,44.0,2.6885420083999634e-05,True
+scenario,ihdp_baseline,pehe,neural_rep,t_learner,30,-1.3725766642857968,-0.30138247758753606,46.0,3.453157842159271e-05,True
+scenario,ihdp_baseline,pehe,neural_rep,x_learner,30,-2.3465471238553786,-0.6296570691577854,10.0,8.009374141693115e-08,True
+scenario,synthetic_gamma0,pehe,neural_rep,s_learner,30,0.14474320423209305,0.1532029044453643,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma0,pehe,neural_rep,t_learner,30,-0.2828195112103293,-0.27839850462303845,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma0,pehe,neural_rep,x_learner,30,0.15058037456486123,0.15866831180537375,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma2,pehe,neural_rep,s_learner,30,-0.07885516691259455,-0.07801043152206771,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma2,pehe,neural_rep,t_learner,30,-0.3228739180145071,-0.32682740842949287,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma2,pehe,neural_rep,x_learner,30,0.02840219302238268,0.024694370914288555,55.0,9.90256667137146e-05,True
+scenario,synthetic_gamma3,pehe,neural_rep,s_learner,30,-0.14963340982337062,-0.15164281897037407,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma3,pehe,neural_rep,t_learner,30,-0.36029218087581855,-0.3586782852324708,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma3,pehe,neural_rep,x_learner,30,-0.010374957779192654,-0.009658088032633405,167.0,0.18396909348666668,False
+scenario,synthetic_imbalance10,pehe,neural_rep,s_learner,30,-0.02323031756673683,-0.038618731248313054,137.0,0.049710121005773544,False
+scenario,synthetic_imbalance10,pehe,neural_rep,t_learner,30,-0.5571265052024935,-0.5526031836609544,0.0,1.862645149230957e-09,True
+scenario,synthetic_imbalance10,pehe,neural_rep,x_learner,30,0.01956659380234716,0.0009981810250503376,177.0,0.2621222734451294,False
