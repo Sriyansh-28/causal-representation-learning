@@ -101,6 +101,59 @@ def paired_comparisons(
     return pd.DataFrame(records)
 
 
+def ablation_comparisons(
+    df: pd.DataFrame, reference_variant: str = "full", metric: str = "pehe"
+) -> pd.DataFrame:
+    """Compare each ablation variant against the full model on paired seeds.
+
+    Experiment 5 varies ``condition_value`` (the variant) while holding the
+    model fixed, so the model-wise pairing used by :func:`paired_comparisons`
+    does not apply. Every variant is trained on the same seeds, so the pairing
+    is by seed. A positive ``mean_diff`` means the variant is *worse* than the
+    full model, i.e. the removed component was contributing.
+
+    Returns:
+        One row per variant with the absolute mean, the change relative to the
+        full model in both absolute and percentage terms, a paired Wilcoxon
+        p-value and a Holm-corrected rejection flag.
+    """
+    df = _successful(df)
+    if df.empty or metric not in df.columns:
+        return pd.DataFrame()
+
+    wide = df.pivot_table(index="seed", columns="condition_value", values=metric)
+    if reference_variant not in wide.columns:
+        return pd.DataFrame()
+
+    ref = wide[reference_variant]
+    ref_mean = float(ref.mean())
+    records: List[Dict[str, object]] = []
+    for variant in wide.columns:
+        if variant == reference_variant:
+            continue
+        pair = wide[[variant, reference_variant]].dropna()
+        res = paired_test(pair[variant].to_numpy(), pair[reference_variant].to_numpy())
+        variant_mean = float(pair[variant].mean())
+        records.append({
+            "metric": metric,
+            "variant": variant,
+            "mean": variant_mean,
+            "full_mean": ref_mean,
+            "delta_vs_full": variant_mean - ref_mean,
+            "pct_change_vs_full": (
+                100.0 * (variant_mean - ref_mean) / ref_mean if ref_mean else float("nan")
+            ),
+            "n_pairs": res["n_pairs"],
+            "p_value": res["p_value"],
+        })
+    if not records:
+        return pd.DataFrame()
+    flags = holm_bonferroni([r["p_value"] for r in records])
+    for r, f in zip(records, flags):
+        r["reject_h0_holm_0.05"] = bool(f)
+    return pd.DataFrame(records)
+
+
 def to_markdown(df: pd.DataFrame, float_fmt: str = "%.3f") -> str:
     """Render a DataFrame as a GitHub-flavoured Markdown table."""
     if df.empty:
@@ -135,4 +188,15 @@ def save_tables(
         cmp_csv = tables_dir / f"{name}_paired_tests.csv"
         cmp_df.to_csv(cmp_csv, index=False)
         paths["paired_tests_csv"] = cmp_csv
+
+    if set(df.get("condition", pd.Series(dtype=str))) == {"ablation"}:
+        frames = [
+            ablation_comparisons(df, metric=m)
+            for m in ("pehe", "abs_ate_error", "policy_regret")
+        ]
+        frames = [f for f in frames if not f.empty]
+        if frames:
+            abl_csv = tables_dir / f"{name}_ablation_deltas.csv"
+            pd.concat(frames, ignore_index=True).to_csv(abl_csv, index=False)
+            paths["ablation_deltas_csv"] = abl_csv
     return paths

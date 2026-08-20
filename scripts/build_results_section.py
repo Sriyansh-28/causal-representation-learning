@@ -20,7 +20,9 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.experiments.aggregate import aggregate_results, paired_comparisons  # noqa: E402
+from src.experiments.aggregate import (  # noqa: E402
+    ablation_comparisons, aggregate_results, paired_comparisons,
+)
 from src.utils.paths import PROJECT_ROOT  # noqa: E402
 
 RAW_DIR = PROJECT_ROOT / "results" / "raw"
@@ -118,6 +120,7 @@ def condition_label(df: pd.DataFrame) -> str:
 def diagnostics_table(df: pd.DataFrame) -> str:
     """Per-condition design diagnostics, averaged over seeds and models."""
     cols = {
+        "ate_true": "true ATE",
         "diag_treated_fraction": "treated frac",
         "diag_smd_max": "max SMD",
         "diag_ps_frac_below_0.1": "P(e<0.1)",
@@ -178,8 +181,43 @@ def render(name: str, heading: str) -> str:
 
     diag = diagnostics_table(df)
     if diag and df["condition"].iloc[0] != "ablation":
-        parts.append(f"**Design diagnostics** (mean over seeds)\n\n{diag}\n")
+        parts.append(
+            "**Manipulation check / design diagnostics** (mean over seeds). "
+            "`true ATE` should stay constant across conditions — if it moves, "
+            "error differences would be confounded with a shifting estimand.\n\n"
+            f"{diag}\n"
+        )
+
+    if df["condition"].iloc[0] == "ablation":
+        parts.append(ablation_delta_block(df))
     return "".join(parts)
+
+
+def ablation_delta_block(df: pd.DataFrame) -> str:
+    """Render each ablation variant's change relative to the full model."""
+    frames = []
+    for metric in ("pehe", "abs_ate_error", "policy_regret"):
+        cmp_df = ablation_comparisons(df, metric=metric)
+        if not cmp_df.empty:
+            frames.append(cmp_df)
+    if not frames:
+        return ""
+    lines = [
+        "**Change relative to the full model** (positive = worse than full, "
+        "i.e. the removed component was contributing). Paired Wilcoxon over "
+        "shared seeds, Holm-corrected within each metric.\n\n",
+        "| metric | variant | mean | full | Δ vs full | % change | p | reject H0 (Holm) |\n",
+        "|---|---|---|---|---|---|---|---|\n",
+    ]
+    for frame in frames:
+        for _, r in frame.iterrows():
+            lines.append(
+                f"| {r['metric']} | {r['variant']} | {_fmt(r['mean'])} | "
+                f"{_fmt(r['full_mean'])} | {_fmt(r['delta_vs_full'])} | "
+                f"{_fmt(r['pct_change_vs_full'], 1)}% | {_fmt(r['p_value'], 4)} | "
+                f"{'yes' if r['reject_h0_holm_0.05'] else 'no'} |\n"
+            )
+    return "".join(lines) + "\n"
 
 
 def sensitivity_block() -> str:

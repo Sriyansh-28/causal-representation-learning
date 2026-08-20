@@ -81,7 +81,15 @@ than estimated.
 **Distribution shift.** Because treated and control covariate distributions
 differ under confounding, a model fitted on one arm is applied to units drawn
 from a different distribution when predicting the counterfactual. This is the
-covariate-shift problem that motivates representation learning here.
+covariate-shift problem that *motivates* representation learning here.
+
+> **Scope caveat.** Covariate shift between arms is a *consequence* of
+> confounding in these experiments, never an independently manipulated factor.
+> No experiment in this project isolates covariate shift, so no result below
+> should be read as demonstrating robustness to distribution shift as such.
+> Experiment 2 manipulates confounding strength; what it can speak to is
+> treatment-selection bias, overlap/positivity degradation, and their effect on
+> individual-level effect estimation.
 
 ## 4. Datasets
 
@@ -236,6 +244,12 @@ differences. These characterise how hard each condition is.
 ## 9. Statistical protocol
 
 - Replicates are independent seeds — for IHDP, distinct outcome realizations.
+- **All of Experiments 1–5 use 30 seeds**, fixed uniformly in advance rather
+  than tuned per experiment. Experiment 6 uses 10 seeds because it sweeps 20
+  hyper-parameter settings. An earlier 10-seed pass left several comparisons
+  near the significance boundary; the seed count was raised for *every*
+  experiment at once, not for the borderline ones, so no comparison was
+  selected for extra power on the basis of its result.
 - Reported as `mean ± SD (median)`. **The median matters here**: IHDP
   per-replicate errors are strongly right-skewed because a few realizations
   have very large outcome scales, so the mean is outlier-dominated.
@@ -279,11 +293,11 @@ Replicates: 30 seeds. Cells are `mean ± SD (median)` across seeds; lower is bet
 | default | T-Learner | -0.748 | 0.0000 | yes |
 | default | X-Learner | -1.742 | 0.0000 | yes |
 
-**Design diagnostics** (mean over seeds)
+**Manipulation check / design diagnostics** (mean over seeds). `true ATE` should stay constant across conditions — if it moves, error differences would be confounded with a shifting estimand.
 
-| condition | treated frac | max SMD | P(e<0.1) | P(e>0.9) | PS KS |
-|---|---|---|---|---|---|
-| default | 0.186 | 0.395 | 0.309 | 0.000 | 0.392 |
+| condition | true ATE | treated frac | max SMD | P(e<0.1) | P(e>0.9) | PS KS |
+|---|---|---|---|---|---|---|
+| default | 4.235 | 0.186 | 0.395 | 0.309 | 0.000 | 0.392 |
 
 
 
@@ -317,22 +331,123 @@ Replicates: 30 seeds. Cells are `mean ± SD (median)` across seeds; lower is bet
 | default | T-Learner | -0.417 | 0.0000 | yes |
 | default | X-Learner | -0.008 | 0.1642 | no |
 
-**Design diagnostics** (mean over seeds)
+**Manipulation check / design diagnostics** (mean over seeds). `true ATE` should stay constant across conditions — if it moves, error differences would be confounded with a shifting estimand.
 
-| condition | treated frac | max SMD | P(e<0.1) | P(e>0.9) | PS KS |
-|---|---|---|---|---|---|
-| default | 0.498 | 0.601 | 0.019 | 0.017 | 0.373 |
+| condition | true ATE | treated frac | max SMD | P(e<0.1) | P(e>0.9) | PS KS |
+|---|---|---|---|---|---|---|
+| default | 0.996 | 0.498 | 0.601 | 0.019 | 0.017 | 0.373 |
 
 
 
 ### Experiment 2 — confounding strength (synthetic)
 
-**PENDING — not yet run.** No results file at `results/raw/confounding_raw.csv`.
+Replicates: 10 seeds. Cells are `mean ± SD (median)` across seeds; lower is better for PEHE, ATE error and policy regret.
+
+**PEHE**
+
+| confounding γ | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| 0.0 | 0.447 ± 0.049 (0.452) | 0.883 ± 0.043 (0.872) | 0.422 ± 0.024 (0.424) | 0.464 ± 0.033 (0.460) |
+| 1.0 | 0.555 ± 0.047 (0.569) | 0.909 ± 0.031 (0.907) | 0.500 ± 0.024 (0.487) | 0.492 ± 0.040 (0.495) |
+| 2.0 | 0.683 ± 0.044 (0.681) | 0.961 ± 0.038 (0.957) | 0.570 ± 0.046 (0.580) | 0.545 ± 0.034 (0.554) |
+| 3.0 | 0.773 ± 0.029 (0.771) | 1.012 ± 0.036 (1.008) | 0.623 ± 0.026 (0.625) | 0.551 ± 0.041 (0.548) |
+
+**Absolute ATE error**
+
+| confounding γ | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| 0.0 | 0.245 ± 0.069 (0.256) | 0.073 ± 0.038 (0.073) | 0.056 ± 0.037 (0.049) | 0.086 ± 0.056 (0.116) |
+| 1.0 | 0.370 ± 0.061 (0.376) | 0.143 ± 0.070 (0.151) | 0.075 ± 0.037 (0.078) | 0.110 ± 0.053 (0.112) |
+| 2.0 | 0.510 ± 0.045 (0.512) | 0.295 ± 0.071 (0.308) | 0.086 ± 0.061 (0.084) | 0.162 ± 0.066 (0.153) |
+| 3.0 | 0.601 ± 0.032 (0.606) | 0.404 ± 0.071 (0.412) | 0.114 ± 0.051 (0.119) | 0.175 ± 0.063 (0.168) |
+
+**Policy regret**
+
+| confounding γ | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| 0.0 | 0.009 ± 0.004 (0.009) | 0.106 ± 0.021 (0.104) | 0.019 ± 0.004 (0.020) | 0.013 ± 0.004 (0.012) |
+| 1.0 | 0.009 ± 0.003 (0.010) | 0.121 ± 0.019 (0.121) | 0.030 ± 0.006 (0.029) | 0.016 ± 0.009 (0.013) |
+| 2.0 | 0.009 ± 0.002 (0.009) | 0.158 ± 0.018 (0.157) | 0.041 ± 0.012 (0.039) | 0.019 ± 0.007 (0.021) |
+| 3.0 | 0.010 ± 0.003 (0.009) | 0.188 ± 0.019 (0.186) | 0.046 ± 0.009 (0.050) | 0.020 ± 0.012 (0.019) |
+
+**Paired Wilcoxon signed-rank tests on PEHE** (negative difference favours NeuralRep; Holm-corrected within each condition)
+
+| condition | NeuralRep vs | mean PEHE diff | p (Wilcoxon) | reject H0 (Holm 0.05) |
+|---|---|---|---|---|
+| 0.0 | S-Learner | 0.017 | 0.5566 | no |
+| 0.0 | T-Learner | -0.419 | 0.0020 | yes |
+| 0.0 | X-Learner | 0.041 | 0.0059 | yes |
+| 1.0 | S-Learner | -0.063 | 0.0098 | yes |
+| 1.0 | T-Learner | -0.417 | 0.0020 | yes |
+| 1.0 | X-Learner | -0.007 | 0.6250 | no |
+| 2.0 | S-Learner | -0.138 | 0.0020 | yes |
+| 2.0 | T-Learner | -0.416 | 0.0020 | yes |
+| 2.0 | X-Learner | -0.026 | 0.0645 | no |
+| 3.0 | S-Learner | -0.222 | 0.0020 | yes |
+| 3.0 | T-Learner | -0.462 | 0.0020 | yes |
+| 3.0 | X-Learner | -0.072 | 0.0020 | yes |
+
+**Manipulation check / design diagnostics** (mean over seeds). `true ATE` should stay constant across conditions — if it moves, error differences would be confounded with a shifting estimand.
+
+| condition | true ATE | treated frac | max SMD | P(e<0.1) | P(e>0.9) | PS KS |
+|---|---|---|---|---|---|---|
+| 0.0 | 0.994 | 0.495 | 0.106 | 0.000 | 0.000 | 0.103 |
+| 1.0 | 0.994 | 0.497 | 0.582 | 0.019 | 0.017 | 0.375 |
+| 2.0 | 0.994 | 0.500 | 0.875 | 0.135 | 0.135 | 0.572 |
+| 3.0 | 0.994 | 0.501 | 1.031 | 0.226 | 0.229 | 0.678 |
+
 
 
 ### Experiment 3 — treatment imbalance (synthetic)
 
-**PENDING — not yet run.** No results file at `results/raw/treatment_imbalance_raw.csv`.
+Replicates: 10 seeds. Cells are `mean ± SD (median)` across seeds; lower is better for PEHE, ATE error and policy regret.
+
+**PEHE**
+
+| treated fraction | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| 0.1 | 0.759 ± 0.084 (0.763) | 1.288 ± 0.098 (1.307) | 0.692 ± 0.089 (0.665) | 0.642 ± 0.068 (0.648) |
+| 0.25 | 0.616 ± 0.057 (0.621) | 0.979 ± 0.038 (0.990) | 0.561 ± 0.047 (0.572) | 0.547 ± 0.048 (0.567) |
+| 0.5 | 0.555 ± 0.047 (0.569) | 0.909 ± 0.031 (0.907) | 0.500 ± 0.024 (0.487) | 0.492 ± 0.040 (0.495) |
+
+**Absolute ATE error**
+
+| treated fraction | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| 0.1 | 0.571 ± 0.088 (0.567) | 0.274 ± 0.185 (0.269) | 0.203 ± 0.119 (0.181) | 0.244 ± 0.143 (0.241) |
+| 0.25 | 0.428 ± 0.062 (0.435) | 0.134 ± 0.095 (0.107) | 0.079 ± 0.070 (0.060) | 0.145 ± 0.081 (0.126) |
+| 0.5 | 0.370 ± 0.061 (0.376) | 0.143 ± 0.070 (0.151) | 0.075 ± 0.037 (0.078) | 0.110 ± 0.053 (0.112) |
+
+**Policy regret**
+
+| treated fraction | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| 0.1 | 0.012 ± 0.012 (0.008) | 0.249 ± 0.055 (0.245) | 0.076 ± 0.040 (0.066) | 0.020 ± 0.019 (0.012) |
+| 0.25 | 0.006 ± 0.003 (0.006) | 0.142 ± 0.026 (0.148) | 0.040 ± 0.019 (0.035) | 0.017 ± 0.010 (0.016) |
+| 0.5 | 0.009 ± 0.003 (0.010) | 0.121 ± 0.019 (0.121) | 0.030 ± 0.006 (0.029) | 0.016 ± 0.009 (0.013) |
+
+**Paired Wilcoxon signed-rank tests on PEHE** (negative difference favours NeuralRep; Holm-corrected within each condition)
+
+| condition | NeuralRep vs | mean PEHE diff | p (Wilcoxon) | reject H0 (Holm 0.05) |
+|---|---|---|---|---|
+| 0.5 | S-Learner | -0.063 | 0.0098 | yes |
+| 0.5 | T-Learner | -0.417 | 0.0020 | yes |
+| 0.5 | X-Learner | -0.007 | 0.6250 | no |
+| 0.25 | S-Learner | -0.069 | 0.0137 | yes |
+| 0.25 | T-Learner | -0.432 | 0.0020 | yes |
+| 0.25 | X-Learner | -0.014 | 0.3223 | no |
+| 0.1 | S-Learner | -0.117 | 0.0020 | yes |
+| 0.1 | T-Learner | -0.646 | 0.0020 | yes |
+| 0.1 | X-Learner | -0.049 | 0.0645 | no |
+
+**Manipulation check / design diagnostics** (mean over seeds). `true ATE` should stay constant across conditions — if it moves, error differences would be confounded with a shifting estimand.
+
+| condition | true ATE | treated frac | max SMD | P(e<0.1) | P(e>0.9) | PS KS |
+|---|---|---|---|---|---|---|
+| 0.1 | 0.994 | 0.098 | 0.618 | 0.652 | 0.000 | 0.399 |
+| 0.25 | 0.994 | 0.254 | 0.580 | 0.191 | 0.000 | 0.371 |
+| 0.5 | 0.994 | 0.497 | 0.582 | 0.019 | 0.017 | 0.375 |
+
 
 
 ### Experiment 4a — training sample size (IHDP)
