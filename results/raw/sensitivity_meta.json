@@ -1,0 +1,78 @@
+{
+  "config": {
+    "name": "sensitivity",
+    "experiment": "sensitivity",
+    "output_dir": "results",
+    "dataset": {
+      "name": "ihdp"
+    },
+    "models": [
+      "neural_rep"
+    ],
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "conditions": {
+      "sweeps": {
+        "latent_dim": [
+          4,
+          8,
+          16,
+          32,
+          64
+        ],
+        "weight_decay": [
+          0.0,
+          1e-05,
+          0.0001,
+          0.001,
+          0.01
+        ],
+        "lr": [
+          0.0001,
+          0.0005,
+          0.001,
+          0.005,
+          0.01
+        ],
+        "epochs": [
+          25,
+          50,
+          100,
+          200,
+          400
+        ]
+      }
+    },
+    "neural": {
+      "hidden_dims": [
+        64,
+        64
+      ],
+      "latent_dim": 32,
+      "head_hidden_dims": [
+        32
+      ],
+      "dropout": 0.1,
+      "weight_decay": 0.0001,
+      "lr": 0.001,
+      "batch_size": 128,
+      "epochs": 200,
+      "val_fraction": 0.2,
+      "early_stopping": true,
+      "patience": 30
+    }
+  },
+  "n_rows": 200,
+  "n_errors": 0,
+  "timestamp_utc": "2026-08-20T08:40:45Z"
+}
