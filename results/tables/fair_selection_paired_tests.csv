@@ -1,0 +1,16 @@
+condition,condition_value,metric,reference,comparison,n_pairs,mean_diff,median_diff,statistic,p_value,reject_h0_holm_0.05
+scenario,ihdp_baseline,pehe,neural_rep,s_learner,30,-2.638586703849557,-0.5886170070748226,54.0,8.856505155563354e-05,True
+scenario,ihdp_baseline,pehe,neural_rep,t_learner,30,-1.3536153629067218,-0.40714922635901357,8.0,4.6566128730773926e-08,True
+scenario,ihdp_baseline,pehe,neural_rep,x_learner,30,-2.3483209237788834,-0.6483447334508634,4.0,1.30385160446167e-08,True
+scenario,synthetic_gamma0,pehe,neural_rep,s_learner,30,0.14361954867858095,0.15291350511175317,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma0,pehe,neural_rep,t_learner,30,-0.30960719337099546,-0.30143223083202575,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma0,pehe,neural_rep,x_learner,30,0.14673801439009654,0.1542932037797496,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma2,pehe,neural_rep,s_learner,30,-0.07835976912553377,-0.08169348865258474,1.0,3.725290298461914e-09,True
+scenario,synthetic_gamma2,pehe,neural_rep,t_learner,30,-0.3438549979866235,-0.3414239322768719,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma2,pehe,neural_rep,x_learner,30,0.02918630648192893,0.0233941193066885,55.0,9.90256667137146e-05,True
+scenario,synthetic_gamma3,pehe,neural_rep,s_learner,30,-0.1476876140373832,-0.14898628002809094,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma3,pehe,neural_rep,t_learner,30,-0.381628155416798,-0.3874058154982633,0.0,1.862645149230957e-09,True
+scenario,synthetic_gamma3,pehe,neural_rep,x_learner,30,-0.004356039502113089,-0.004335816212541144,195.0,0.4521643426269293,False
+scenario,synthetic_imbalance10,pehe,neural_rep,s_learner,30,-0.02602643129497648,-0.03955474549766741,128.0,0.03098480962216854,False
+scenario,synthetic_imbalance10,pehe,neural_rep,t_learner,30,-0.580599359415869,-0.5723069899491586,0.0,1.862645149230957e-09,True
+scenario,synthetic_imbalance10,pehe,neural_rep,x_learner,30,0.016473134514888337,0.014719689619059118,181.0,0.2988441474735737,False
