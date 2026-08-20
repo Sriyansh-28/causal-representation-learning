@@ -7,7 +7,9 @@ import pytest
 
 from src.evaluation.diagnostics import overlap_diagnostics, standardized_mean_differences
 from src.evaluation.statistics import bootstrap_ci, holm_bonferroni, paired_test, summarize
-from src.experiments.aggregate import aggregate_results, paired_comparisons, pivot_table
+from src.experiments.aggregate import (
+    ablation_comparisons, aggregate_results, paired_comparisons, pivot_table,
+)
 from src.experiments.registry import ABLATION_VARIANTS, build_dataset, build_learner
 from src.experiments.runner import run_experiment
 from src.utils.config import parse_config
@@ -209,3 +211,55 @@ def test_overlap_diagnostics_report_expected_keys():
     diag = overlap_diagnostics(split.train)
     assert {"treated_fraction", "ps_min", "ps_max", "smd_mean"} <= set(diag)
     assert 0.0 <= diag["ps_min"] <= diag["ps_max"] <= 1.0
+
+
+def _ablation_frame(full_pehe: float, variant_pehe: float, n: int = 10) -> pd.DataFrame:
+    """Build a synthetic ablation result frame with a fixed per-seed offset."""
+    rows = []
+    for seed in range(n):
+        jitter = 0.01 * seed
+        rows.append({"condition": "ablation", "condition_value": "full", "seed": seed,
+                     "model": "neural_rep", "pehe": full_pehe + jitter, "error": ""})
+        rows.append({"condition": "ablation", "condition_value": "no_representation",
+                     "seed": seed, "model": "neural_rep",
+                     "pehe": variant_pehe + jitter, "error": ""})
+    return pd.DataFrame(rows)
+
+
+def test_ablation_comparisons_reports_delta_and_percent_change():
+    out = ablation_comparisons(_ablation_frame(1.0, 1.2))
+    assert len(out) == 1
+    row = out.iloc[0]
+    assert row["variant"] == "no_representation"
+    assert row["delta_vs_full"] == pytest.approx(0.2)
+    # Full-model mean is 1.0 + mean(0.01 * seed) = 1.045, so 0.2 / 1.045.
+    assert row["full_mean"] == pytest.approx(1.045)
+    assert row["pct_change_vs_full"] == pytest.approx(100 * 0.2 / 1.045, rel=1e-6)
+
+
+def test_ablation_comparisons_positive_delta_means_variant_is_worse():
+    # Removing a contributing component should raise error above the full model.
+    out = ablation_comparisons(_ablation_frame(1.0, 1.5))
+    assert out.iloc[0]["delta_vs_full"] > 0
+    assert bool(out.iloc[0]["reject_h0_holm_0.05"]) is True
+
+
+def test_ablation_comparisons_negative_delta_when_variant_is_better():
+    out = ablation_comparisons(_ablation_frame(1.5, 1.0))
+    assert out.iloc[0]["delta_vs_full"] < 0
+
+
+def test_ablation_comparisons_excludes_the_reference_variant():
+    out = ablation_comparisons(_ablation_frame(1.0, 1.2))
+    assert "full" not in set(out["variant"])
+
+
+def test_ablation_comparisons_returns_empty_without_the_reference():
+    df = _ablation_frame(1.0, 1.2)
+    df = df[df["condition_value"] != "full"]
+    assert ablation_comparisons(df).empty
+
+
+def test_ablation_comparisons_pairs_by_seed():
+    out = ablation_comparisons(_ablation_frame(1.0, 1.2, n=7))
+    assert out.iloc[0]["n_pairs"] == 7
