@@ -77,6 +77,32 @@ def optimal_policy_value(mu0: np.ndarray, mu1: np.ndarray) -> float:
     return float(np.mean(np.maximum(mu0, mu1)))
 
 
+def always_treat_value(mu0: np.ndarray, mu1: np.ndarray) -> float:
+    """Value of the constant policy that treats every unit."""
+    return float(np.mean(np.asarray(mu1, dtype=np.float64).ravel()))
+
+
+def never_treat_value(mu0: np.ndarray, mu1: np.ndarray) -> float:
+    """Value of the constant policy that treats no unit."""
+    return float(np.mean(np.asarray(mu0, dtype=np.float64).ravel()))
+
+
+def trivial_policy_regret(mu0: np.ndarray, mu1: np.ndarray) -> Dict[str, float]:
+    """Regret of the two constant baselines.
+
+    Policy regret is only informative when the constant baselines are far from
+    optimal. If ``always_treat`` already achieves near-zero regret, the decision
+    problem is close to trivial and a model can score well simply by predicting
+    a positive effect everywhere -- without discriminating between units at all.
+    Always report these alongside a model's regret.
+    """
+    opt = optimal_policy_value(mu0, mu1)
+    return {
+        "always_treat_regret": opt - always_treat_value(mu0, mu1),
+        "never_treat_regret": opt - never_treat_value(mu0, mu1),
+    }
+
+
 def policy_regret(tau_hat: np.ndarray, mu0: np.ndarray, mu1: np.ndarray) -> float:
     """Value gap to the oracle policy. Zero is optimal; always non-negative."""
     return optimal_policy_value(mu0, mu1) - policy_value(tau_hat, mu0, mu1)
@@ -104,6 +130,15 @@ def evaluate_cate(
         out["policy_value"] = policy_value(tau_hat, mu0, mu1)
         out["policy_regret"] = policy_regret(tau_hat, mu0, mu1)
         out["optimal_policy_value"] = optimal_policy_value(mu0, mu1)
+        # Constant-policy baselines make a degenerate "good" regret visible: a
+        # model that treats everyone scores like always_treat regardless of how
+        # well it estimates individual effects.
+        out["always_treat_value"] = always_treat_value(mu0, mu1)
+        out["never_treat_value"] = never_treat_value(mu0, mu1)
+        out.update(trivial_policy_regret(mu0, mu1))
+        out["policy_treated_fraction"] = float(
+            np.mean(np.asarray(tau_hat, dtype=np.float64).ravel() > 0.0)
+        )
     return out
 
 
