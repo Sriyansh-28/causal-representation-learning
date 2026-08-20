@@ -1,0 +1,13 @@
+condition,condition_value,metric,reference,comparison,n_pairs,mean_diff,median_diff,statistic,p_value,reject_h0_holm_0.05
+confounding_strength,0.0,pehe,neural_rep,s_learner,10,0.016720517843150186,0.007564678634120053,21.0,0.556640625,False
+confounding_strength,0.0,pehe,neural_rep,t_learner,10,-0.41896736823793157,-0.4152711767426313,0.0,0.001953125,True
+confounding_strength,0.0,pehe,neural_rep,x_learner,10,0.04136788293909115,0.041227925104940916,2.0,0.005859375,True
+confounding_strength,1.0,pehe,neural_rep,s_learner,10,-0.06291840197649373,-0.06536379683875868,3.0,0.009765625,True
+confounding_strength,1.0,pehe,neural_rep,t_learner,10,-0.4171090117882805,-0.42255651521649984,0.0,0.001953125,True
+confounding_strength,1.0,pehe,neural_rep,x_learner,10,-0.007285255654255684,-0.013336699014304593,22.0,0.625,False
+confounding_strength,2.0,pehe,neural_rep,s_learner,10,-0.13792792579635757,-0.12961366062047697,0.0,0.001953125,True
+confounding_strength,2.0,pehe,neural_rep,t_learner,10,-0.41596038793431,-0.41956524296703396,0.0,0.001953125,True
+confounding_strength,2.0,pehe,neural_rep,x_learner,10,-0.02566833341468781,-0.024997861890721562,9.0,0.064453125,False
+confounding_strength,3.0,pehe,neural_rep,s_learner,10,-0.22230013558668732,-0.21216982852146699,0.0,0.001953125,True
+confounding_strength,3.0,pehe,neural_rep,t_learner,10,-0.46150599799409486,-0.4755672626635053,0.0,0.001953125,True
+confounding_strength,3.0,pehe,neural_rep,x_learner,10,-0.07180944680517035,-0.062113783663563404,0.0,0.001953125,True
