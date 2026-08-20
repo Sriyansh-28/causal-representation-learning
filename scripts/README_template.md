@@ -81,7 +81,15 @@ than estimated.
 **Distribution shift.** Because treated and control covariate distributions
 differ under confounding, a model fitted on one arm is applied to units drawn
 from a different distribution when predicting the counterfactual. This is the
-covariate-shift problem that motivates representation learning here.
+covariate-shift problem that *motivates* representation learning here.
+
+> **Scope caveat.** Covariate shift between arms is a *consequence* of
+> confounding in these experiments, never an independently manipulated factor.
+> No experiment in this project isolates covariate shift, so no result below
+> should be read as demonstrating robustness to distribution shift as such.
+> Experiment 2 manipulates confounding strength; what it can speak to is
+> treatment-selection bias, overlap/positivity degradation, and their effect on
+> individual-level effect estimation.
 
 ## 4. Datasets
 
