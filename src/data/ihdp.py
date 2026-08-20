@@ -62,7 +62,6 @@ def download_ihdp(data_dir: Optional[Path] = None, verify: bool = True) -> Dict[
         dest = data_dir / spec["filename"]
         if not dest.exists():
             tmp = dest.with_suffix(dest.suffix + ".part")
-            urllib.request.urlopen  # noqa: B018 - documents the network dependency
             urllib.request.urlretrieve(spec["url"], tmp)
             tmp.rename(dest)
         if verify:
