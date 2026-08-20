@@ -97,3 +97,59 @@ def test_unknown_model_is_rejected(small_split):
     tr = small_split.train
     with pytest.raises(ValueError, match="no tuning grid"):
         tune_and_fit("nope", tr.x, tr.t, tr.y, seed=0, neural_cfg={})
+
+
+# --- Regression tests for the hyper-parameter forwarding bug -------------------
+# A first run of Experiment 7 silently dropped meta-learner hyper-parameters:
+# build_learner filtered them out and the learners never forwarded them to the
+# base regressor. Every candidate was therefore identical, selection was a
+# no-op, and only the neural model was genuinely tuned.
+
+@pytest.mark.parametrize("model", ["s_learner", "t_learner", "x_learner"])
+def test_meta_learner_hyperparameters_reach_the_base_regressor(model):
+    from src.experiments.registry import build_learner
+
+    small = build_learner(model, 0, {}, base_learner="gbm", n_estimators=50, max_depth=2)
+    large = build_learner(model, 0, {}, base_learner="gbm", n_estimators=400, max_depth=3)
+    inner = (lambda m: m.model) if model == "s_learner" else (lambda m: m.model0)
+    assert inner(small).n_estimators == 50 and inner(small).max_depth == 2
+    assert inner(large).n_estimators == 400 and inner(large).max_depth == 3
+
+
+@pytest.mark.parametrize("model", ["s_learner", "t_learner", "x_learner"])
+def test_different_configs_produce_different_predictions(model, small_split):
+    from src.experiments.registry import build_learner
+
+    tr = small_split.train
+    a = build_learner(model, 0, {}, base_learner="gbm", n_estimators=50, max_depth=2,
+                      learning_rate=0.05).fit(tr.x, tr.t, tr.y)
+    b = build_learner(model, 0, {}, base_learner="gbm", n_estimators=400, max_depth=3,
+                      learning_rate=0.05).fit(tr.x, tr.t, tr.y)
+    assert not np.allclose(a.predict_cate(small_split.test.x),
+                           b.predict_cate(small_split.test.x))
+
+
+@pytest.mark.parametrize("model", ["s_learner", "t_learner", "x_learner", "neural_rep"])
+def test_tuning_candidates_are_not_all_identical(model, small_split):
+    """The grid must actually discriminate between candidates for every model."""
+    tr = small_split.train
+    _, rec = tune_and_fit(model, tr.x, tr.t, tr.y, seed=0, neural_cfg=FAST_NEURAL)
+    finite = [v for v in rec["val_mse_all"] if np.isfinite(v)]
+    assert len(set(finite)) > 1, f"{model}: all candidates scored identically"
+
+
+def test_degenerate_grid_raises_rather_than_silently_passing(monkeypatch, small_split):
+    import src.experiments.tuning as tuning_mod
+
+    dup = [dict(tuning_mod.TUNING_GRIDS["t_learner"][0]) for _ in range(N_CONFIGS)]
+    monkeypatch.setitem(tuning_mod.TUNING_GRIDS, "t_learner", dup)
+    tr = small_split.train
+    with pytest.raises(RuntimeError, match="no effect"):
+        tuning_mod.tune_and_fit("t_learner", tr.x, tr.t, tr.y, seed=0, neural_cfg={})
+
+
+def test_base_learner_key_is_not_passed_to_sklearn():
+    from src.learners.meta import make_base_learner
+
+    m = make_base_learner("gbm", seed=0, base_learner="gbm", n_estimators=77)
+    assert m.n_estimators == 77

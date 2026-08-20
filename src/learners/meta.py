@@ -36,7 +36,8 @@ def make_base_learner(kind: str, seed: int, **overrides: Any) -> Any:
                   "random_state": seed, "n_jobs": 1}
     elif kind == "ridge":
         kwargs = {"alpha": 1.0}
-    kwargs.update(overrides)
+    # 'base_learner' selects the family; it is not an sklearn estimator param.
+    kwargs.update({k: v for k, v in overrides.items() if k != "base_learner"})
     return cls(**kwargs)
 
 
@@ -51,7 +52,7 @@ class SLearner(BaseCATELearner):
 
     def __init__(self, base_learner: str = "gbm", seed: int = 0, **kwargs: Any) -> None:
         super().__init__(seed=seed, base_learner=base_learner, **kwargs)
-        self.model = make_base_learner(base_learner, seed)
+        self.model = make_base_learner(base_learner, seed, **kwargs)
 
     def fit(self, x: np.ndarray, t: np.ndarray, y: np.ndarray) -> "SLearner":
         x, t, y = self._validate_inputs(x, t, y)
@@ -86,8 +87,8 @@ class TLearner(BaseCATELearner):
 
     def __init__(self, base_learner: str = "gbm", seed: int = 0, **kwargs: Any) -> None:
         super().__init__(seed=seed, base_learner=base_learner, **kwargs)
-        self.model0 = make_base_learner(base_learner, seed)
-        self.model1 = make_base_learner(base_learner, seed + 1)
+        self.model0 = make_base_learner(base_learner, seed, **kwargs)
+        self.model1 = make_base_learner(base_learner, seed + 1, **kwargs)
 
     def fit(self, x: np.ndarray, t: np.ndarray, y: np.ndarray) -> "TLearner":
         x, t, y = self._validate_inputs(x, t, y)
@@ -123,8 +124,8 @@ class XLearner(BaseCATELearner):
 
     def __init__(self, base_learner: str = "gbm", seed: int = 0, **kwargs: Any) -> None:
         super().__init__(seed=seed, base_learner=base_learner, **kwargs)
-        self.model0 = make_base_learner(base_learner, seed)
-        self.model1 = make_base_learner(base_learner, seed + 1)
+        self.model0 = make_base_learner(base_learner, seed, **kwargs)
+        self.model1 = make_base_learner(base_learner, seed + 1, **kwargs)
         self.tau0 = make_base_learner(base_learner, seed + 2)
         self.tau1 = make_base_learner(base_learner, seed + 3)
         self.propensity_model = LogisticRegression(max_iter=2000, random_state=seed)

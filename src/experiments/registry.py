@@ -80,5 +80,7 @@ def build_learner(
     if base_name == "neural_rep":
         kwargs = {**neural_cfg, **overrides}
         return cls(seed=seed, **kwargs)
-    kwargs = {k: v for k, v in overrides.items() if k == "base_learner"}
-    return cls(seed=seed, **kwargs)
+    # Forward every override: meta-learner hyper-parameters (n_estimators,
+    # max_depth, learning_rate, ...) reach the base regressor through here.
+    # Filtering them out silently disabled meta-learner tuning entirely.
+    return cls(seed=seed, **overrides)

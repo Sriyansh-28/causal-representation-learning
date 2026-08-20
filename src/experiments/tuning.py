@@ -164,8 +164,18 @@ def tune_and_fit(
             scores.append(float("inf"))  # candidate is unusable; never selected
     tuning_seconds = time.time() - started
 
-    if not np.isfinite(scores).any():
+    finite = [v for v in scores if np.isfinite(v)]
+    if not finite:
         raise RuntimeError(f"all {len(grid)} candidates failed for {model_name}")
+    # A grid that produces identical scores for every candidate means the
+    # hyper-parameters never reached the model: selection would be a no-op and
+    # the "equal budget" claim would be false. Fail loudly rather than silently
+    # reporting an untuned model as tuned.
+    if len(finite) > 1 and np.ptp(finite) == 0.0:
+        raise RuntimeError(
+            f"all {len(finite)} candidates for '{model_name}' scored identically "
+            f"({finite[0]:.6g}); the tuning grid has no effect on this model"
+        )
 
     best = int(np.argmin(scores))
     chosen = grid[best]
