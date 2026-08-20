@@ -341,145 +341,545 @@ Replicates: 30 seeds. Cells are `mean ± SD (median)` across seeds; lower is bet
 
 ### Experiment 2 — confounding strength (synthetic)
 
-Replicates: 10 seeds. Cells are `mean ± SD (median)` across seeds; lower is better for PEHE, ATE error and policy regret.
+Replicates: 30 seeds. Cells are `mean ± SD (median)` across seeds; lower is better for PEHE, ATE error and policy regret.
 
 **PEHE**
 
 | confounding γ | S-Learner | T-Learner | X-Learner | NeuralRep |
 |---|---|---|---|---|
-| 0.0 | 0.447 ± 0.049 (0.452) | 0.883 ± 0.043 (0.872) | 0.422 ± 0.024 (0.424) | 0.464 ± 0.033 (0.460) |
-| 1.0 | 0.555 ± 0.047 (0.569) | 0.909 ± 0.031 (0.907) | 0.500 ± 0.024 (0.487) | 0.492 ± 0.040 (0.495) |
-| 2.0 | 0.683 ± 0.044 (0.681) | 0.961 ± 0.038 (0.957) | 0.570 ± 0.046 (0.580) | 0.545 ± 0.034 (0.554) |
-| 3.0 | 0.773 ± 0.029 (0.771) | 1.012 ± 0.036 (1.008) | 0.623 ± 0.026 (0.625) | 0.551 ± 0.041 (0.548) |
+| 0.0 | 0.434 ± 0.045 (0.428) | 0.887 ± 0.041 (0.887) | 0.431 ± 0.028 (0.426) | 0.474 ± 0.026 (0.476) |
+| 1.0 | 0.553 ± 0.057 (0.561) | 0.911 ± 0.043 (0.907) | 0.502 ± 0.029 (0.494) | 0.494 ± 0.033 (0.492) |
+| 2.0 | 0.688 ± 0.044 (0.683) | 0.953 ± 0.041 (0.955) | 0.580 ± 0.038 (0.583) | 0.538 ± 0.034 (0.544) |
+| 3.0 | 0.771 ± 0.041 (0.766) | 1.005 ± 0.037 (0.999) | 0.628 ± 0.025 (0.627) | 0.558 ± 0.041 (0.554) |
 
 **Absolute ATE error**
 
 | confounding γ | S-Learner | T-Learner | X-Learner | NeuralRep |
 |---|---|---|---|---|
-| 0.0 | 0.245 ± 0.069 (0.256) | 0.073 ± 0.038 (0.073) | 0.056 ± 0.037 (0.049) | 0.086 ± 0.056 (0.116) |
-| 1.0 | 0.370 ± 0.061 (0.376) | 0.143 ± 0.070 (0.151) | 0.075 ± 0.037 (0.078) | 0.110 ± 0.053 (0.112) |
-| 2.0 | 0.510 ± 0.045 (0.512) | 0.295 ± 0.071 (0.308) | 0.086 ± 0.061 (0.084) | 0.162 ± 0.066 (0.153) |
-| 3.0 | 0.601 ± 0.032 (0.606) | 0.404 ± 0.071 (0.412) | 0.114 ± 0.051 (0.119) | 0.175 ± 0.063 (0.168) |
+| 0.0 | 0.229 ± 0.056 (0.217) | 0.060 ± 0.034 (0.061) | 0.045 ± 0.028 (0.043) | 0.077 ± 0.053 (0.077) |
+| 1.0 | 0.362 ± 0.061 (0.364) | 0.120 ± 0.066 (0.109) | 0.059 ± 0.042 (0.049) | 0.096 ± 0.056 (0.092) |
+| 2.0 | 0.506 ± 0.048 (0.505) | 0.254 ± 0.075 (0.257) | 0.092 ± 0.060 (0.087) | 0.166 ± 0.068 (0.167) |
+| 3.0 | 0.597 ± 0.045 (0.597) | 0.353 ± 0.099 (0.371) | 0.105 ± 0.058 (0.099) | 0.191 ± 0.092 (0.186) |
 
 **Policy regret**
 
 | confounding γ | S-Learner | T-Learner | X-Learner | NeuralRep |
 |---|---|---|---|---|
-| 0.0 | 0.009 ± 0.004 (0.009) | 0.106 ± 0.021 (0.104) | 0.019 ± 0.004 (0.020) | 0.013 ± 0.004 (0.012) |
-| 1.0 | 0.009 ± 0.003 (0.010) | 0.121 ± 0.019 (0.121) | 0.030 ± 0.006 (0.029) | 0.016 ± 0.009 (0.013) |
-| 2.0 | 0.009 ± 0.002 (0.009) | 0.158 ± 0.018 (0.157) | 0.041 ± 0.012 (0.039) | 0.019 ± 0.007 (0.021) |
-| 3.0 | 0.010 ± 0.003 (0.009) | 0.188 ± 0.019 (0.186) | 0.046 ± 0.009 (0.050) | 0.020 ± 0.012 (0.019) |
+| 0.0 | 0.008 ± 0.004 (0.008) | 0.100 ± 0.019 (0.097) | 0.019 ± 0.006 (0.019) | 0.013 ± 0.007 (0.012) |
+| 1.0 | 0.007 ± 0.003 (0.006) | 0.121 ± 0.021 (0.119) | 0.027 ± 0.006 (0.028) | 0.014 ± 0.006 (0.013) |
+| 2.0 | 0.010 ± 0.005 (0.009) | 0.152 ± 0.021 (0.154) | 0.040 ± 0.010 (0.037) | 0.016 ± 0.010 (0.014) |
+| 3.0 | 0.011 ± 0.006 (0.009) | 0.183 ± 0.024 (0.179) | 0.047 ± 0.011 (0.047) | 0.021 ± 0.016 (0.016) |
 
 **Paired Wilcoxon signed-rank tests on PEHE** (negative difference favours NeuralRep; Holm-corrected within each condition)
 
 | condition | NeuralRep vs | mean PEHE diff | p (Wilcoxon) | reject H0 (Holm 0.05) |
 |---|---|---|---|---|
-| 0.0 | S-Learner | 0.017 | 0.5566 | no |
-| 0.0 | T-Learner | -0.419 | 0.0020 | yes |
-| 0.0 | X-Learner | 0.041 | 0.0059 | yes |
-| 1.0 | S-Learner | -0.063 | 0.0098 | yes |
-| 1.0 | T-Learner | -0.417 | 0.0020 | yes |
-| 1.0 | X-Learner | -0.007 | 0.6250 | no |
-| 2.0 | S-Learner | -0.138 | 0.0020 | yes |
-| 2.0 | T-Learner | -0.416 | 0.0020 | yes |
-| 2.0 | X-Learner | -0.026 | 0.0645 | no |
-| 3.0 | S-Learner | -0.222 | 0.0020 | yes |
-| 3.0 | T-Learner | -0.462 | 0.0020 | yes |
-| 3.0 | X-Learner | -0.072 | 0.0020 | yes |
+| 0.0 | S-Learner | 0.040 | 0.0002 | yes |
+| 0.0 | T-Learner | -0.413 | 0.0000 | yes |
+| 0.0 | X-Learner | 0.043 | 0.0000 | yes |
+| 1.0 | S-Learner | -0.059 | 0.0000 | yes |
+| 1.0 | T-Learner | -0.417 | 0.0000 | yes |
+| 1.0 | X-Learner | -0.008 | 0.1642 | no |
+| 2.0 | S-Learner | -0.150 | 0.0000 | yes |
+| 2.0 | T-Learner | -0.416 | 0.0000 | yes |
+| 2.0 | X-Learner | -0.043 | 0.0000 | yes |
+| 3.0 | S-Learner | -0.213 | 0.0000 | yes |
+| 3.0 | T-Learner | -0.447 | 0.0000 | yes |
+| 3.0 | X-Learner | -0.069 | 0.0000 | yes |
 
 **Manipulation check / design diagnostics** (mean over seeds). `true ATE` should stay constant across conditions — if it moves, error differences would be confounded with a shifting estimand.
 
 | condition | true ATE | treated frac | max SMD | P(e<0.1) | P(e>0.9) | PS KS |
 |---|---|---|---|---|---|---|
-| 0.0 | 0.994 | 0.495 | 0.106 | 0.000 | 0.000 | 0.103 |
-| 1.0 | 0.994 | 0.497 | 0.582 | 0.019 | 0.017 | 0.375 |
-| 2.0 | 0.994 | 0.500 | 0.875 | 0.135 | 0.135 | 0.572 |
-| 3.0 | 0.994 | 0.501 | 1.031 | 0.226 | 0.229 | 0.678 |
+| 0.0 | 0.996 | 0.498 | 0.099 | 0.000 | 0.000 | 0.100 |
+| 1.0 | 0.996 | 0.498 | 0.601 | 0.019 | 0.017 | 0.373 |
+| 2.0 | 0.996 | 0.499 | 0.903 | 0.140 | 0.139 | 0.576 |
+| 3.0 | 0.996 | 0.500 | 1.055 | 0.232 | 0.231 | 0.686 |
 
 
 
 ### Experiment 3 — treatment imbalance (synthetic)
 
-Replicates: 10 seeds. Cells are `mean ± SD (median)` across seeds; lower is better for PEHE, ATE error and policy regret.
+Replicates: 30 seeds. Cells are `mean ± SD (median)` across seeds; lower is better for PEHE, ATE error and policy regret.
 
 **PEHE**
 
 | treated fraction | S-Learner | T-Learner | X-Learner | NeuralRep |
 |---|---|---|---|---|
-| 0.1 | 0.759 ± 0.084 (0.763) | 1.288 ± 0.098 (1.307) | 0.692 ± 0.089 (0.665) | 0.642 ± 0.068 (0.648) |
-| 0.25 | 0.616 ± 0.057 (0.621) | 0.979 ± 0.038 (0.990) | 0.561 ± 0.047 (0.572) | 0.547 ± 0.048 (0.567) |
-| 0.5 | 0.555 ± 0.047 (0.569) | 0.909 ± 0.031 (0.907) | 0.500 ± 0.024 (0.487) | 0.492 ± 0.040 (0.495) |
+| 0.1 | 0.728 ± 0.088 (0.733) | 1.282 ± 0.081 (1.285) | 0.685 ± 0.079 (0.673) | 0.641 ± 0.068 (0.644) |
+| 0.25 | 0.602 ± 0.065 (0.607) | 0.991 ± 0.048 (0.990) | 0.565 ± 0.036 (0.572) | 0.557 ± 0.048 (0.565) |
+| 0.5 | 0.553 ± 0.057 (0.561) | 0.911 ± 0.043 (0.907) | 0.502 ± 0.029 (0.494) | 0.494 ± 0.033 (0.492) |
 
 **Absolute ATE error**
 
 | treated fraction | S-Learner | T-Learner | X-Learner | NeuralRep |
 |---|---|---|---|---|
-| 0.1 | 0.571 ± 0.088 (0.567) | 0.274 ± 0.185 (0.269) | 0.203 ± 0.119 (0.181) | 0.244 ± 0.143 (0.241) |
-| 0.25 | 0.428 ± 0.062 (0.435) | 0.134 ± 0.095 (0.107) | 0.079 ± 0.070 (0.060) | 0.145 ± 0.081 (0.126) |
-| 0.5 | 0.370 ± 0.061 (0.376) | 0.143 ± 0.070 (0.151) | 0.075 ± 0.037 (0.078) | 0.110 ± 0.053 (0.112) |
+| 0.1 | 0.534 ± 0.098 (0.545) | 0.250 ± 0.173 (0.233) | 0.149 ± 0.098 (0.143) | 0.210 ± 0.142 (0.188) |
+| 0.25 | 0.412 ± 0.073 (0.420) | 0.138 ± 0.077 (0.140) | 0.075 ± 0.056 (0.071) | 0.162 ± 0.083 (0.175) |
+| 0.5 | 0.362 ± 0.061 (0.364) | 0.120 ± 0.066 (0.109) | 0.059 ± 0.042 (0.049) | 0.096 ± 0.056 (0.092) |
 
 **Policy regret**
 
 | treated fraction | S-Learner | T-Learner | X-Learner | NeuralRep |
 |---|---|---|---|---|
-| 0.1 | 0.012 ± 0.012 (0.008) | 0.249 ± 0.055 (0.245) | 0.076 ± 0.040 (0.066) | 0.020 ± 0.019 (0.012) |
-| 0.25 | 0.006 ± 0.003 (0.006) | 0.142 ± 0.026 (0.148) | 0.040 ± 0.019 (0.035) | 0.017 ± 0.010 (0.016) |
-| 0.5 | 0.009 ± 0.003 (0.010) | 0.121 ± 0.019 (0.121) | 0.030 ± 0.006 (0.029) | 0.016 ± 0.009 (0.013) |
+| 0.1 | 0.011 ± 0.009 (0.008) | 0.232 ± 0.061 (0.231) | 0.067 ± 0.033 (0.060) | 0.021 ± 0.024 (0.010) |
+| 0.25 | 0.008 ± 0.005 (0.007) | 0.145 ± 0.027 (0.142) | 0.041 ± 0.015 (0.037) | 0.016 ± 0.010 (0.011) |
+| 0.5 | 0.007 ± 0.003 (0.006) | 0.121 ± 0.021 (0.119) | 0.027 ± 0.006 (0.028) | 0.014 ± 0.006 (0.013) |
 
 **Paired Wilcoxon signed-rank tests on PEHE** (negative difference favours NeuralRep; Holm-corrected within each condition)
 
 | condition | NeuralRep vs | mean PEHE diff | p (Wilcoxon) | reject H0 (Holm 0.05) |
 |---|---|---|---|---|
-| 0.5 | S-Learner | -0.063 | 0.0098 | yes |
-| 0.5 | T-Learner | -0.417 | 0.0020 | yes |
-| 0.5 | X-Learner | -0.007 | 0.6250 | no |
-| 0.25 | S-Learner | -0.069 | 0.0137 | yes |
-| 0.25 | T-Learner | -0.432 | 0.0020 | yes |
-| 0.25 | X-Learner | -0.014 | 0.3223 | no |
-| 0.1 | S-Learner | -0.117 | 0.0020 | yes |
-| 0.1 | T-Learner | -0.646 | 0.0020 | yes |
-| 0.1 | X-Learner | -0.049 | 0.0645 | no |
+| 0.5 | S-Learner | -0.059 | 0.0000 | yes |
+| 0.5 | T-Learner | -0.417 | 0.0000 | yes |
+| 0.5 | X-Learner | -0.008 | 0.1642 | no |
+| 0.25 | S-Learner | -0.045 | 0.0006 | yes |
+| 0.25 | T-Learner | -0.434 | 0.0000 | yes |
+| 0.25 | X-Learner | -0.008 | 0.3818 | no |
+| 0.1 | S-Learner | -0.087 | 0.0000 | yes |
+| 0.1 | T-Learner | -0.641 | 0.0000 | yes |
+| 0.1 | X-Learner | -0.044 | 0.0040 | yes |
 
 **Manipulation check / design diagnostics** (mean over seeds). `true ATE` should stay constant across conditions — if it moves, error differences would be confounded with a shifting estimand.
 
 | condition | true ATE | treated frac | max SMD | P(e<0.1) | P(e>0.9) | PS KS |
 |---|---|---|---|---|---|---|
-| 0.1 | 0.994 | 0.098 | 0.618 | 0.652 | 0.000 | 0.399 |
-| 0.25 | 0.994 | 0.254 | 0.580 | 0.191 | 0.000 | 0.371 |
-| 0.5 | 0.994 | 0.497 | 0.582 | 0.019 | 0.017 | 0.375 |
+| 0.1 | 0.996 | 0.098 | 0.637 | 0.656 | 0.000 | 0.398 |
+| 0.25 | 0.996 | 0.250 | 0.592 | 0.198 | 0.000 | 0.371 |
+| 0.5 | 0.996 | 0.498 | 0.601 | 0.019 | 0.017 | 0.373 |
 
 
 
 ### Experiment 4a — training sample size (IHDP)
 
-**PENDING — not yet run.** No results file at `results/raw/sample_size_raw.csv`.
+Replicates: 30 seeds. Cells are `mean ± SD (median)` across seeds; lower is better for PEHE, ATE error and policy regret.
+
+**PEHE**
+
+| train fraction | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| 0.25 | 5.301 ± 10.148 (1.583) | 3.980 ± 6.815 (1.396) | 5.402 ± 9.295 (1.743) | 3.931 ± 6.276 (1.437) |
+| 0.5 | 4.644 ± 8.947 (1.369) | 3.472 ± 6.061 (1.249) | 4.344 ± 7.533 (1.440) | 2.798 ± 4.374 (1.169) |
+| 0.75 | 4.341 ± 8.625 (1.330) | 3.022 ± 5.230 (1.147) | 3.998 ± 7.077 (1.275) | 2.511 ± 4.267 (0.995) |
+| 1.0 | 4.041 ± 8.018 (1.237) | 2.756 ± 4.586 (1.091) | 3.751 ± 6.751 (1.284) | 2.008 ± 3.231 (0.926) |
+
+**Absolute ATE error**
+
+| train fraction | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| 0.25 | 0.922 ± 1.802 (0.257) | 0.724 ± 1.319 (0.277) | 0.836 ± 1.244 (0.396) | 0.641 ± 0.995 (0.334) |
+| 0.5 | 1.053 ± 2.443 (0.241) | 0.548 ± 1.208 (0.134) | 0.576 ± 0.970 (0.295) | 0.366 ± 0.514 (0.225) |
+| 0.75 | 0.761 ± 1.863 (0.196) | 0.346 ± 0.612 (0.134) | 0.505 ± 0.820 (0.182) | 0.305 ± 0.372 (0.222) |
+| 1.0 | 0.694 ± 1.626 (0.151) | 0.323 ± 0.544 (0.121) | 0.379 ± 0.446 (0.213) | 0.228 ± 0.259 (0.169) |
+
+**Policy regret**
+
+| train fraction | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| 0.25 | 0.646 ± 1.404 (0.113) | 0.234 ± 0.416 (0.100) | 0.558 ± 1.008 (0.113) | 0.264 ± 0.476 (0.086) |
+| 0.5 | 0.252 ± 0.397 (0.091) | 0.106 ± 0.176 (0.057) | 0.235 ± 0.382 (0.062) | 0.084 ± 0.113 (0.036) |
+| 0.75 | 0.226 ± 0.381 (0.091) | 0.113 ± 0.266 (0.035) | 0.182 ± 0.267 (0.063) | 0.064 ± 0.126 (0.023) |
+| 1.0 | 0.173 ± 0.287 (0.065) | 0.085 ± 0.224 (0.017) | 0.196 ± 0.350 (0.073) | 0.050 ± 0.077 (0.019) |
+
+**Paired Wilcoxon signed-rank tests on PEHE** (negative difference favours NeuralRep; Holm-corrected within each condition)
+
+| condition | NeuralRep vs | mean PEHE diff | p (Wilcoxon) | reject H0 (Holm 0.05) |
+|---|---|---|---|---|
+| 0.25 | S-Learner | -1.371 | 0.1579 | no |
+| 0.25 | T-Learner | -0.050 | 0.3707 | no |
+| 0.25 | X-Learner | -1.471 | 0.0040 | yes |
+| 0.5 | S-Learner | -1.846 | 0.0081 | yes |
+| 0.5 | T-Learner | -0.674 | 0.0062 | yes |
+| 0.5 | X-Learner | -1.546 | 0.0000 | yes |
+| 0.75 | S-Learner | -1.831 | 0.0026 | yes |
+| 0.75 | T-Learner | -0.511 | 0.0006 | yes |
+| 0.75 | X-Learner | -1.487 | 0.0000 | yes |
+| 1.0 | S-Learner | -2.032 | 0.0050 | yes |
+| 1.0 | T-Learner | -0.748 | 0.0000 | yes |
+| 1.0 | X-Learner | -1.742 | 0.0000 | yes |
+
+**Manipulation check / design diagnostics** (mean over seeds). `true ATE` should stay constant across conditions — if it moves, error differences would be confounded with a shifting estimand.
+
+| condition | true ATE | treated frac | max SMD | P(e<0.1) | P(e>0.9) | PS KS |
+|---|---|---|---|---|---|---|
+| 0.25 | 4.235 | 0.183 | 0.552 | 0.374 | 0.000 | 0.547 |
+| 0.5 | 4.235 | 0.186 | 0.495 | 0.327 | 0.000 | 0.457 |
+| 0.75 | 4.235 | 0.184 | 0.420 | 0.319 | 0.000 | 0.419 |
+| 1.0 | 4.235 | 0.186 | 0.395 | 0.309 | 0.000 | 0.392 |
+
 
 
 ### Experiment 4b — training sample size (synthetic)
 
-**PENDING — not yet run.** No results file at `results/raw/sample_size_synthetic_raw.csv`.
+Replicates: 30 seeds. Cells are `mean ± SD (median)` across seeds; lower is better for PEHE, ATE error and policy regret.
+
+**PEHE**
+
+| train fraction | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| 0.25 | 0.548 ± 0.053 (0.549) | 0.907 ± 0.026 (0.906) | 0.498 ± 0.031 (0.493) | 0.504 ± 0.044 (0.497) |
+| 0.5 | 0.467 ± 0.026 (0.467) | 0.773 ± 0.021 (0.775) | 0.402 ± 0.020 (0.398) | 0.438 ± 0.031 (0.437) |
+| 0.75 | 0.425 ± 0.030 (0.431) | 0.691 ± 0.022 (0.694) | 0.350 ± 0.018 (0.348) | 0.394 ± 0.026 (0.394) |
+| 1.0 | 0.404 ± 0.030 (0.402) | 0.653 ± 0.017 (0.649) | 0.321 ± 0.017 (0.320) | 0.369 ± 0.032 (0.369) |
+
+**Absolute ATE error**
+
+| train fraction | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| 0.25 | 0.350 ± 0.060 (0.364) | 0.110 ± 0.070 (0.112) | 0.061 ± 0.048 (0.047) | 0.102 ± 0.077 (0.082) |
+| 0.5 | 0.290 ± 0.030 (0.290) | 0.089 ± 0.034 (0.087) | 0.031 ± 0.025 (0.025) | 0.068 ± 0.053 (0.057) |
+| 0.75 | 0.256 ± 0.032 (0.249) | 0.072 ± 0.042 (0.061) | 0.023 ± 0.021 (0.021) | 0.074 ± 0.046 (0.079) |
+| 1.0 | 0.242 ± 0.035 (0.243) | 0.058 ± 0.035 (0.047) | 0.028 ± 0.022 (0.021) | 0.062 ± 0.051 (0.044) |
+
+**Policy regret**
+
+| train fraction | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| 0.25 | 0.007 ± 0.003 (0.006) | 0.118 ± 0.016 (0.113) | 0.025 ± 0.007 (0.024) | 0.012 ± 0.006 (0.010) |
+| 0.5 | 0.004 ± 0.002 (0.004) | 0.086 ± 0.010 (0.086) | 0.015 ± 0.004 (0.014) | 0.009 ± 0.003 (0.008) |
+| 0.75 | 0.004 ± 0.002 (0.003) | 0.068 ± 0.008 (0.068) | 0.010 ± 0.003 (0.010) | 0.009 ± 0.004 (0.008) |
+| 1.0 | 0.004 ± 0.002 (0.004) | 0.059 ± 0.007 (0.057) | 0.009 ± 0.003 (0.008) | 0.008 ± 0.002 (0.008) |
+
+**Paired Wilcoxon signed-rank tests on PEHE** (negative difference favours NeuralRep; Holm-corrected within each condition)
+
+| condition | NeuralRep vs | mean PEHE diff | p (Wilcoxon) | reject H0 (Holm 0.05) |
+|---|---|---|---|---|
+| 0.25 | S-Learner | -0.044 | 0.0004 | yes |
+| 0.25 | T-Learner | -0.403 | 0.0000 | yes |
+| 0.25 | X-Learner | 0.006 | 0.4045 | no |
+| 0.5 | S-Learner | -0.029 | 0.0004 | yes |
+| 0.5 | T-Learner | -0.334 | 0.0000 | yes |
+| 0.5 | X-Learner | 0.037 | 0.0000 | yes |
+| 0.75 | S-Learner | -0.031 | 0.0000 | yes |
+| 0.75 | T-Learner | -0.298 | 0.0000 | yes |
+| 0.75 | X-Learner | 0.044 | 0.0000 | yes |
+| 1.0 | S-Learner | -0.034 | 0.0000 | yes |
+| 1.0 | T-Learner | -0.284 | 0.0000 | yes |
+| 1.0 | X-Learner | 0.048 | 0.0000 | yes |
+
+**Manipulation check / design diagnostics** (mean over seeds). `true ATE` should stay constant across conditions — if it moves, error differences would be confounded with a shifting estimand.
+
+| condition | true ATE | treated frac | max SMD | P(e<0.1) | P(e>0.9) | PS KS |
+|---|---|---|---|---|---|---|
+| 0.25 | 0.998 | 0.502 | 0.567 | 0.016 | 0.017 | 0.364 |
+| 0.5 | 0.998 | 0.498 | 0.578 | 0.016 | 0.016 | 0.364 |
+| 0.75 | 0.998 | 0.499 | 0.576 | 0.016 | 0.015 | 0.359 |
+| 1.0 | 0.998 | 0.499 | 0.574 | 0.015 | 0.015 | 0.356 |
+
 
 
 ### Experiment 5a — neural component ablation (IHDP)
 
-**PENDING — not yet run.** No results file at `results/raw/ablation_raw.csv`.
+Replicates: 30 seeds. Cells are `mean ± SD (median)` across seeds; lower is better for PEHE, ATE error and policy regret.
+
+**PEHE**
+
+| variant | NeuralRep |
+|---|---|
+| full | 2.008 ± 3.231 (0.926) |
+| no_regularization | 1.958 ± 2.849 (0.946) |
+| no_representation | 2.136 ± 3.053 (1.115) |
+| no_treatment_heads | 4.557 ± 8.501 (1.519) |
+
+**Absolute ATE error**
+
+| variant | NeuralRep |
+|---|---|
+| full | 0.228 ± 0.259 (0.169) |
+| no_regularization | 0.202 ± 0.178 (0.160) |
+| no_representation | 0.356 ± 0.276 (0.325) |
+| no_treatment_heads | 1.149 ± 2.037 (0.628) |
+
+**Policy regret**
+
+| variant | NeuralRep |
+|---|---|
+| full | 0.050 ± 0.077 (0.019) |
+| no_regularization | 0.045 ± 0.051 (0.029) |
+| no_representation | 0.054 ± 0.107 (0.028) |
+| no_treatment_heads | 0.200 ± 0.410 (0.081) |
+
+**Change relative to the full model** (positive = worse than full, i.e. the removed component was contributing). Paired Wilcoxon over shared seeds, Holm-corrected within each metric.
+
+| metric | variant | mean | full | Δ vs full | % change | p | reject H0 (Holm) |
+|---|---|---|---|---|---|---|---|
+| pehe | no_regularization | 1.958 | 2.008 | -0.051 | -2.5% | 0.4771 | no |
+| pehe | no_representation | 2.136 | 2.008 | 0.127 | 6.3% | 0.0020 | yes |
+| pehe | no_treatment_heads | 4.557 | 2.008 | 2.548 | 126.9% | 0.0000 | yes |
+| abs_ate_error | no_regularization | 0.202 | 0.228 | -0.027 | -11.6% | 0.6850 | no |
+| abs_ate_error | no_representation | 0.356 | 0.228 | 0.128 | 56.0% | 0.0019 | yes |
+| abs_ate_error | no_treatment_heads | 1.149 | 0.228 | 0.921 | 403.5% | 0.0000 | yes |
+| policy_regret | no_regularization | 0.045 | 0.050 | -0.005 | -9.4% | 0.4691 | no |
+| policy_regret | no_representation | 0.054 | 0.050 | 0.004 | 8.5% | 0.7380 | no |
+| policy_regret | no_treatment_heads | 0.200 | 0.050 | 0.150 | 301.4% | 0.0003 | yes |
+
 
 
 ### Experiment 5b — neural component ablation (synthetic)
 
-**PENDING — not yet run.** No results file at `results/raw/ablation_synthetic_raw.csv`.
+Replicates: 30 seeds. Cells are `mean ± SD (median)` across seeds; lower is better for PEHE, ATE error and policy regret.
+
+**PEHE**
+
+| variant | NeuralRep |
+|---|---|
+| full | 0.445 ± 0.041 (0.438) |
+| no_regularization | 0.451 ± 0.030 (0.449) |
+| no_representation | 0.518 ± 0.026 (0.516) |
+| no_treatment_heads | 0.585 ± 0.031 (0.580) |
+
+**Absolute ATE error**
+
+| variant | NeuralRep |
+|---|---|
+| full | 0.082 ± 0.061 (0.066) |
+| no_regularization | 0.097 ± 0.054 (0.087) |
+| no_representation | 0.054 ± 0.037 (0.046) |
+| no_treatment_heads | 0.124 ± 0.059 (0.129) |
+
+**Policy regret**
+
+| variant | NeuralRep |
+|---|---|
+| full | 0.009 ± 0.004 (0.008) |
+| no_regularization | 0.010 ± 0.006 (0.009) |
+| no_representation | 0.030 ± 0.008 (0.032) |
+| no_treatment_heads | 0.008 ± 0.001 (0.008) |
+
+**Change relative to the full model** (positive = worse than full, i.e. the removed component was contributing). Paired Wilcoxon over shared seeds, Holm-corrected within each metric.
+
+| metric | variant | mean | full | Δ vs full | % change | p | reject H0 (Holm) |
+|---|---|---|---|---|---|---|---|
+| pehe | no_regularization | 0.451 | 0.445 | 0.005 | 1.2% | 0.3387 | no |
+| pehe | no_representation | 0.518 | 0.445 | 0.072 | 16.2% | 0.0000 | yes |
+| pehe | no_treatment_heads | 0.585 | 0.445 | 0.140 | 31.4% | 0.0000 | yes |
+| abs_ate_error | no_regularization | 0.097 | 0.082 | 0.016 | 19.1% | 0.1403 | no |
+| abs_ate_error | no_representation | 0.054 | 0.082 | -0.028 | -34.4% | 0.0636 | no |
+| abs_ate_error | no_treatment_heads | 0.124 | 0.082 | 0.043 | 52.3% | 0.0062 | yes |
+| policy_regret | no_regularization | 0.010 | 0.009 | 0.001 | 11.1% | 0.4427 | no |
+| policy_regret | no_representation | 0.030 | 0.009 | 0.021 | 223.1% | 0.0000 | yes |
+| policy_regret | no_treatment_heads | 0.008 | 0.009 | -0.001 | -15.2% | 0.1648 | no |
+
 
 
 ### Experiment 6 — hyper-parameter sensitivity (IHDP)
 
-**PENDING — not yet run.** No results file at `results/raw/sensitivity_raw.csv`.
+Replicates: 10 seeds. One parameter varied at a time around the baseline setting. Cells are PEHE `mean ± SD (median)`.
+
+**epochs**
+
+| value | PEHE |
+|---|---|
+| 25.0 | 2.283 ± 4.466 (0.805) |
+| 50.0 | 2.089 ± 3.860 (0.832) |
+| 100.0 | 1.992 ± 3.403 (0.919) |
+| 200.0 | 1.976 ± 3.200 (0.991) |
+| 400.0 | 2.024 ± 3.280 (0.994) |
+
+**latent_dim**
+
+| value | PEHE |
+|---|---|
+| 4.0 | 2.103 ± 3.958 (0.903) |
+| 8.0 | 1.949 ± 3.549 (0.881) |
+| 16.0 | 1.793 ± 3.004 (0.824) |
+| 32.0 | 1.973 ± 3.548 (0.923) |
+| 64.0 | 1.885 ± 3.343 (0.851) |
+
+**lr**
+
+| value | PEHE |
+|---|---|
+| 0.0001 | 2.397 ± 4.523 (0.952) |
+| 0.0005 | 2.039 ± 3.731 (0.846) |
+| 0.001 | 1.973 ± 3.548 (0.923) |
+| 0.005 | 1.751 ± 2.731 (0.904) |
+| 0.01 | 2.035 ± 3.572 (0.916) |
+
+**weight_decay**
+
+| value | PEHE |
+|---|---|
+| 0.0 | 1.972 ± 3.569 (0.909) |
+| 1e-05 | 1.989 ± 3.638 (0.905) |
+| 0.0001 | 1.973 ± 3.548 (0.923) |
+| 0.001 | 1.822 ± 3.160 (0.851) |
+| 0.01 | 1.782 ± 3.262 (0.812) |
 
 
 ---
 
 ## 11. Findings
 
-**PENDING** — written once all experiments have been executed.
+Every claim below is traceable to a CSV under `results/`. Where a comparison
+was not statistically significant after Holm correction, it is reported as "no
+detectable difference" rather than as a win.
+
+### 11.1 The headline: conditional usefulness, not superiority
+
+Across 153 Holm-corrected paired comparisons spanning three metrics
+(`results/tables/all_paired_comparisons.csv`), the neural model does **not**
+dominate:
+
+| Metric | Significant, favours NeuralRep | Significant, favours a meta-learner |
+|---|---|---|
+| PEHE | 39 | 5 |
+| Absolute ATE error | 18 | 12 |
+| Policy regret | 34 | 12 |
+
+The pattern behind those counts is systematic, not noise. On the **synthetic**
+benchmark, three different estimators win three different metrics:
+
+- **NeuralRep** has the lowest PEHE — but only under design stress (see 11.2).
+- **X-Learner** has lower ATE error than NeuralRep in *every* synthetic
+  condition tested (all γ, all imbalance levels, all sample sizes; 12/12
+  significant).
+- **S-Learner** has lower policy regret than NeuralRep in *every* synthetic
+  condition tested (12/12 significant).
+
+On **IHDP**, by contrast, NeuralRep is never significantly beaten on any metric
+in any condition. IHDP is small (672 training units), heavily confounded, and
+18% treated — precisely the stressed regime identified in 11.2.
+
+### 11.2 When representation learning helps, and when it does not
+
+Experiment 2 produces a clean, well-powered **crossover** with the true ATE
+held constant at 0.9956 across all conditions:
+
+| γ | overlap (units with e<0.1 or e>0.9) | X-Learner PEHE | NeuralRep PEHE | Holm verdict |
+|---|---|---|---|---|
+| 0.0 | 0% | **0.431** | 0.474 | NeuralRep significantly **worse** (p<0.0001) |
+| 1.0 | 3.6% | 0.502 | 0.494 | no detectable difference (p=0.164) |
+| 2.0 | 27% | 0.580 | **0.538** | NeuralRep significantly **better** (p<0.0001) |
+| 3.0 | 45.5% | 0.628 | **0.558** | NeuralRep significantly **better** (p<0.0001) |
+
+Under randomization the shared representation is a liability; under strong
+confounding and degraded overlap it is an advantage. Experiment 3 shows the
+same shape for imbalance: NeuralRep beats X-Learner on PEHE only at the
+strongest imbalance (10% treated, p=0.004), with no detectable difference at
+25% or 50%.
+
+**Effect sizes are modest.** The significant PEHE gaps versus X-Learner are
+0.043–0.069 PEHE units on a base of roughly 0.5, i.e. 8–14% relative. These are
+consistent and well-powered, not large.
+
+### 11.3 Sample size does not drive the result — design stress does
+
+The two sample-size experiments point in opposite directions, and the conflict
+is informative rather than contradictory:
+
+| Benchmark | Regime | Relative PEHE improvement, 25% → 100% | Outcome at largest n |
+|---|---|---|---|
+| IHDP (168 → 672) | γ high, 18% treated | NeuralRep **−49%**, X-Learner −31% | NeuralRep significantly better |
+| Synthetic (2000 → 8000) | γ = 1.0, balanced | NeuralRep −26.7%, X-Learner **−35.6%** | X-Learner significantly better, gap **widening** with n |
+
+More data does not rescue the neural model in an easy regime; it lets the
+X-Learner pull further ahead (Δ grows +0.037 → +0.048 as n goes 4000 → 8000).
+The determining factor across all experiments is the **difficulty of the
+design** — confounding strength and treatment imbalance — not the amount of
+data.
+
+## 12. Ablation: which component actually matters
+
+Experiment 5, 30 seeds, paired by seed, Holm-corrected within each metric.
+Positive Δ means removing the component made the model worse.
+
+**PEHE change relative to the full model**
+
+| Component removed | IHDP (n=672) | Synthetic (n=4000) |
+|---|---|---|
+| Treatment-specific heads | **+126.9%** (p<0.0001) | **+31.4%** (p<0.0001) |
+| Learned representation | +6.3% (p=0.0020) | +16.2% (p<0.0001) |
+| Regularization (dropout + weight decay) | −2.5% (p=0.477, **ns**) | +1.2% (p=0.339, **ns**) |
+
+Three conclusions replicate across both benchmarks:
+
+1. **The treatment-specific heads are the dominant component**, not the learned
+   representation. Removing them on IHDP more than doubles PEHE and inflates
+   ATE error by 404%. The variant without them is exactly a *neural
+   S-Learner*, and its collapse mirrors the S-Learner's poor showing in
+   Experiment 1 — an internally consistent cross-check.
+2. **The learned representation is a real but secondary contributor**, and its
+   importance *grows with data* (+6.3% on 672 units, +16.2% on 4000). This
+   coheres with the IHDP sample-size trend in 11.3.
+3. **Regularization is inert.** Dropout and weight decay are not significant on
+   any metric on either benchmark. Sensitivity analysis agrees: weight decay is
+   the least influential hyper-parameter examined (11.6% PEHE spread).
+
+**This partially contradicts the project's own framing.** The hypothesis was
+that a shared representation is the mechanism behind the neural model's
+behaviour. The evidence says the two-head architecture does most of the work,
+and the representation adds a smaller, genuine increment that matters more as
+data grows. That ordering is the single most important empirical result here.
+
+One caveat against over-reading: component contributions are metric-dependent.
+On synthetic data, removing the representation *improved* ATE error by 34%
+(p=0.064, ns) while tripling policy regret (+223%, p<0.0001).
+
+## 13. Sensitivity analysis
+
+Experiment 6, IHDP, 10 seeds, one hyper-parameter varied at a time. Total PEHE
+spread across each swept range:
+
+| Hyper-parameter | Range swept | PEHE spread | Best value |
+|---|---|---|---|
+| Learning rate | 1e-4 → 1e-2 | **36.9%** | 0.005 |
+| Latent dimension | 4 → 64 | 17.3% | 16 |
+| Epochs | 25 → 400 | 15.5% | 200 |
+| Weight decay | 0 → 1e-2 | 11.6% | 0.01 |
+
+Learning rate matters roughly three times as much as weight decay. Performance
+is flat between latent dimensions 8 and 64, so the representation's *width* is
+not critical — consistent with the ablation finding that the encoder is a
+secondary component. Results beyond 100 epochs are essentially flat, indicating
+the early-stopping budget is adequate rather than binding.
+
+The reported baseline configuration (lr=0.001, latent_dim=32) is **not** the
+best setting found in this sweep (lr=0.005, latent_dim=16 were better). No
+result in this project was produced with a tuned configuration, and the
+baseline was fixed before the sweep was run.
+
+## 14. Error analysis and limitations
+
+### 14.1 Error structure
+
+Per-replicate IHDP errors are strongly right-skewed: NeuralRep's mean PEHE is
+2.008 but its median is 0.926, because a handful of realizations have very
+large outcome scales. All tables therefore report mean, SD *and* median, and
+all significance testing uses the rank-based Wilcoxon signed-rank test rather
+than a t-test. Mean and median occasionally disagree about the winner — on
+IHDP sample size, T-Learner has lower *median* ATE error than NeuralRep at
+three of four sizes while NeuralRep wins on the mean. Both are reported.
+
+### 14.2 Limitations
+
+1. **Hyper-parameter fairness is asymmetric — the most important caveat.**
+   NeuralRep receives adaptive model selection (early stopping on a 20%
+   validation split); the S/T/X-Learners use fixed default hyper-parameters
+   with no tuning. NeuralRep also therefore trains on 20% less data. Because of
+   this, cross-model results should be read as comparing *these configured
+   estimators*, not as isolating representation learning per se. The
+   Experiment 5 ablation is unaffected — every variant shares identical early
+   stopping — which is why the ablation, not the baseline comparison, carries
+   the mechanism claim.
+2. **No covariate-shift experiment exists.** Covariate shift between arms is a
+   consequence of the confounding manipulation, never an independently
+   manipulated factor. Nothing here demonstrates robustness to distribution
+   shift as such.
+3. **Unconfoundedness holds by construction** in both benchmarks; every
+   confounder is observed. Nothing here speaks to hidden confounding, and no
+   sensitivity analysis to unobserved confounding (e.g. Rosenbaum bounds) was
+   performed.
+4. **Two benchmarks only.** IHDP is a single small semi-synthetic dataset whose
+   quirks are well documented, and the synthetic DGP is one specific functional
+   form (partially linear with a mild nonlinearity). ACIC and other benchmarks
+   are supported by the framework but were not run.
+5. **Meta-learners use one base learner.** All three wrap gradient boosting;
+   conclusions about S/T/X may not transfer to other base regressors.
+6. **Experiment 6 uses 10 seeds**, not 30, and varies one hyper-parameter at a
+   time, so interactions between hyper-parameters are not explored.
+7. **Effect sizes are modest** where significant (8–14% relative PEHE), so
+   statistical significance should not be read as practical importance.
 
 
 ---
