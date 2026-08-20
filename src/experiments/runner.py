@@ -21,6 +21,7 @@ from ..utils.config import ExperimentConfig
 from ..utils.paths import ensure_dir, resolve
 from ..utils.seeding import set_seed
 from .registry import ABLATION_VARIANTS, build_dataset, build_learner
+from .tuning import tune_and_fit
 
 # A condition is (label, value, dataset_overrides, learner_overrides, models_or_None).
 Condition = Tuple[str, Any, Dict[str, Any], Dict[str, Any], List[str] | None]
@@ -53,6 +54,17 @@ def _conditions(config: ExperimentConfig) -> Iterator[Condition]:
                     f"expected one of {sorted(ABLATION_VARIANTS)}"
                 )
             yield ("ablation", variant, {}, dict(ABLATION_VARIANTS[variant]), ["neural_rep"])
+
+    elif exp == "fair_selection":
+        scenarios = cond.get("scenarios", [])
+        if not scenarios:
+            raise ValueError("fair_selection experiment requires a 'scenarios' block")
+        for scenario in scenarios:
+            if "name" not in scenario or "dataset" not in scenario:
+                raise ValueError(
+                    "each fair_selection scenario needs 'name' and 'dataset' keys"
+                )
+            yield ("scenario", scenario["name"], dict(scenario["dataset"]), {}, None)
 
     elif exp == "sensitivity":
         sweeps: Dict[str, List[Any]] = cond.get("sweeps", {})
@@ -97,8 +109,16 @@ def run_single(
     y_std = scaled.meta["y_std"]
 
     started = time.time()
-    learner = build_learner(model_name, seed, config.neural, **learner_overrides)
-    learner.fit(scaled.train.x, scaled.train.t, scaled.train.y)
+    tuning: Dict[str, Any] = {}
+    if config.experiment == "fair_selection":
+        # Every estimator gets the same candidate count, split and criterion.
+        learner, tuning = tune_and_fit(
+            model_name, scaled.train.x, scaled.train.t, scaled.train.y,
+            seed, config.neural,
+        )
+    else:
+        learner = build_learner(model_name, seed, config.neural, **learner_overrides)
+        learner.fit(scaled.train.x, scaled.train.t, scaled.train.y)
     # Undo outcome scaling: y' = (y - m)/s implies tau = tau' * s.
     tau_hat = learner.predict_cate(scaled.test.x) * y_std
     fit_seconds = time.time() - started
@@ -116,6 +136,15 @@ def run_single(
         "treated_fraction_train": float(scaled.train.treated_fraction),
         "fit_seconds": fit_seconds,
     }
+    if tuning:
+        row.update({
+            "selected_config": str(tuning["selected_config"]),
+            "selected_index": tuning["selected_index"],
+            "val_mse_selected": tuning["val_mse_selected"],
+            "n_configs_evaluated": tuning["n_configs_evaluated"],
+            "tuning_seconds": tuning["tuning_seconds"],
+            "refit_seconds": tuning["refit_seconds"],
+        })
     row.update(
         evaluate_cate(tau_hat, raw_test.tau_true, raw_test.mu0, raw_test.mu1)
     )

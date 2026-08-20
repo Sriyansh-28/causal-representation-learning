@@ -9,7 +9,7 @@ import yaml
 
 VALID_EXPERIMENTS = {
     "baseline", "confounding", "treatment_imbalance",
-    "sample_size", "ablation", "sensitivity",
+    "sample_size", "ablation", "sensitivity", "fair_selection",
 }
 
 

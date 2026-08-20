@@ -30,6 +30,15 @@ class BaseCATELearner(ABC):
     def predict_cate(self, x: np.ndarray) -> np.ndarray:
         """Return estimated ``tau_hat(x)``, shape ``(n,)``."""
 
+    @abstractmethod
+    def predict_factual(self, x: np.ndarray, t: np.ndarray) -> np.ndarray:
+        """Predict the outcome under each unit's *observed* treatment.
+
+        This is the only prediction target that is observable in practice, so
+        it is the sole basis on which models can be selected without oracle
+        access to counterfactuals.
+        """
+
     def predict_ate(self, x: np.ndarray) -> float:
         """Average the predicted individual effects over ``x``."""
         return float(np.mean(self.predict_cate(x)))

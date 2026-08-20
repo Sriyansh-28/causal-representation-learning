@@ -173,6 +173,39 @@ def plot_cate_error_distribution(df: pd.DataFrame, out_path: Path) -> Optional[P
     return out_path
 
 
+def plot_grouped_bars(
+    agg: pd.DataFrame, metric: str, out_path: Path, title: Optional[str] = None
+) -> Optional[Path]:
+    """Grouped bars: one cluster per scenario, one bar per model, SD whiskers."""
+    _style()
+    sub = agg[agg["metric"] == metric]
+    if sub.empty:
+        return None
+    scenarios = list(dict.fromkeys(sub["condition_value"]))
+    models = _ordered_models(sub)
+    width = 0.8 / max(len(models), 1)
+    colors = ["#4C72B0", "#DD8452", "#55A868", "#C44E52"]
+
+    fig, ax = plt.subplots(figsize=(max(7.0, 1.6 * len(scenarios)), 4.0))
+    for i, model in enumerate(models):
+        means, stds = [], []
+        for scen in scenarios:
+            row = sub[(sub["model"] == model) & (sub["condition_value"] == scen)]
+            means.append(float(row["mean"].iloc[0]) if not row.empty else np.nan)
+            stds.append(float(row["std"].iloc[0]) if not row.empty else np.nan)
+        positions = np.arange(len(scenarios)) + i * width - 0.4 + width / 2
+        ax.bar(positions, means, width=width, yerr=stds, capsize=3,
+               label=_label(model), color=colors[i % len(colors)])
+    ax.set_xticks(np.arange(len(scenarios)))
+    ax.set_xticklabels(scenarios, rotation=20, ha="right")
+    ax.set_ylabel(metric)
+    ax.set_title(title or f"{metric} by scenario")
+    ax.legend(frameon=False, fontsize=9)
+    fig.savefig(out_path, bbox_inches="tight")
+    plt.close(fig)
+    return out_path
+
+
 def generate_figures(
     df: pd.DataFrame, agg: pd.DataFrame, experiment: str, name: str, out_dir: Path
 ) -> List[Path]:
@@ -207,6 +240,11 @@ def generate_figures(
     elif experiment == "ablation":
         _add(plot_ablation(agg, "pehe", fig_dir / f"{name}_pehe.png"))
         _add(plot_ablation(agg, "abs_ate_error", fig_dir / f"{name}_ate_error.png"))
+    elif experiment == "fair_selection":
+        for metric in ("pehe", "abs_ate_error", "policy_regret"):
+            _add(plot_grouped_bars(
+                agg, metric, fig_dir / f"{name}_{metric}.png",
+                title=f"{metric} under equal-budget model selection"))
     elif experiment == "sensitivity":
         written.extend(plot_sensitivity(agg, "pehe", fig_dir))
     return written

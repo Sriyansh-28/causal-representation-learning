@@ -41,6 +41,15 @@ class NeuralRepresentationLearner(BaseCATELearner):
         with torch.no_grad():
             return self.model.predict_tau(xt).cpu().numpy().astype(np.float64)
 
+    def predict_factual(self, x: np.ndarray, t: np.ndarray) -> np.ndarray:
+        """Predict observed-treatment outcomes from the matching head."""
+        self._check_fitted()
+        assert self.model is not None
+        xt = torch.from_numpy(np.asarray(x, dtype=np.float32))
+        tt = torch.from_numpy(np.asarray(t, dtype=np.float32).ravel())
+        with torch.no_grad():
+            return self.model.predict_factual(xt, tt).cpu().numpy().astype(np.float64)
+
     def predict_potential_outcomes(self, x: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Return estimated ``(Y(0), Y(1))`` for each row of ``x``."""
         self._check_fitted()

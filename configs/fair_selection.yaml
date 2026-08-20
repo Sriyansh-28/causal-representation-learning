@@ -1,0 +1,84 @@
+# Experiment 7 -- FAIR MODEL SELECTION.
+#
+# Experiments 1-6 gave NeuralRep adaptive capacity control (early stopping)
+# while S/T/X-Learners ran on fixed defaults. This experiment removes that
+# asymmetry and re-tests the key conclusions under an equal-budget protocol.
+#
+# Every estimator receives:
+#   * the same 6 candidate configurations (src/experiments/tuning.py)
+#   * the same train/validation split, from the same seed
+#   * the same selection criterion: factual validation MSE
+#   * a refit of the selected configuration on the full training set
+#   * no adaptive early stopping (the neural model's epoch budget is tuned
+#     like any other hyper-parameter)
+#
+# Selection uses factual outcome error, not PEHE: PEHE requires counterfactuals
+# that no practitioner observes, so selecting on it would be oracle selection.
+#
+# Scenarios re-test the conditions that drove the original conclusions:
+#   ihdp_baseline        -- Experiment 1a (NeuralRep's strongest result)
+#   synthetic_gamma0     -- Experiment 2, the randomized end where NeuralRep lost
+#   synthetic_gamma2/3   -- Experiment 2, the confounded end where NeuralRep won
+#   synthetic_imbalance  -- Experiment 3, 10% treated, NeuralRep's only win there
+name: fair_selection
+experiment: fair_selection
+output_dir: results
+
+dataset:
+  name: synthetic
+
+models: [s_learner, t_learner, x_learner, neural_rep]
+
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+
+conditions:
+  scenarios:
+    - name: ihdp_baseline
+      dataset:
+        name: ihdp
+    - name: synthetic_gamma0
+      dataset:
+        name: synthetic
+        n_train: 2000
+        n_test: 2000
+        d: 20
+        n_confounders: 5
+        confounding_strength: 0.0
+        target_treated_fraction: 0.5
+        noise_std: 1.0
+    - name: synthetic_gamma2
+      dataset:
+        name: synthetic
+        n_train: 2000
+        n_test: 2000
+        d: 20
+        n_confounders: 5
+        confounding_strength: 2.0
+        target_treated_fraction: 0.5
+        noise_std: 1.0
+    - name: synthetic_gamma3
+      dataset:
+        name: synthetic
+        n_train: 2000
+        n_test: 2000
+        d: 20
+        n_confounders: 5
+        confounding_strength: 3.0
+        target_treated_fraction: 0.5
+        noise_std: 1.0
+    - name: synthetic_imbalance10
+      dataset:
+        name: synthetic
+        n_train: 2000
+        n_test: 2000
+        d: 20
+        n_confounders: 5
+        confounding_strength: 1.0
+        target_treated_fraction: 0.1
+        noise_std: 1.0
+
+# Base neural settings; individual candidates override these.
+neural:
+  hidden_dims: [64, 64]
+  head_hidden_dims: [32]
+  batch_size: 128

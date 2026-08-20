@@ -67,6 +67,13 @@ class SLearner(BaseCATELearner):
             np.column_stack([x, zeros])
         )
 
+    def predict_factual(self, x: np.ndarray, t: np.ndarray) -> np.ndarray:
+        """Predict observed-treatment outcomes from the single joint model."""
+        self._check_fitted()
+        x = np.asarray(x, dtype=np.float64)
+        t = np.asarray(t, dtype=np.float64).ravel()
+        return self.model.predict(np.column_stack([x, t]))
+
 
 class TLearner(BaseCATELearner):
     """Separate outcome models per arm; effect is their difference.
@@ -93,6 +100,14 @@ class TLearner(BaseCATELearner):
         self._check_fitted()
         x = np.asarray(x, dtype=np.float64)
         return self.model1.predict(x) - self.model0.predict(x)
+
+    def predict_factual(self, x: np.ndarray, t: np.ndarray) -> np.ndarray:
+        """Predict observed-treatment outcomes from the per-arm outcome models."""
+        self._check_fitted()
+        x = np.asarray(x, dtype=np.float64)
+        t = np.asarray(t, dtype=np.float64).ravel()
+        return np.where(t > 0.5, self.model1.predict(x), self.model0.predict(x))
+
 
 
 class XLearner(BaseCATELearner):
@@ -139,3 +154,11 @@ class XLearner(BaseCATELearner):
         x = np.asarray(x, dtype=np.float64)
         g = self.propensity_model.predict_proba(x)[:, 1]
         return g * self.tau0.predict(x) + (1.0 - g) * self.tau1.predict(x)
+
+    def predict_factual(self, x: np.ndarray, t: np.ndarray) -> np.ndarray:
+        """Predict observed-treatment outcomes from the per-arm outcome models."""
+        self._check_fitted()
+        x = np.asarray(x, dtype=np.float64)
+        t = np.asarray(t, dtype=np.float64).ravel()
+        return np.where(t > 0.5, self.model1.predict(x), self.model0.predict(x))
+
