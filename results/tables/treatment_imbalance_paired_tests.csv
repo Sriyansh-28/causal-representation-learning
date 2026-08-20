@@ -1,0 +1,10 @@
+condition,condition_value,metric,reference,comparison,n_pairs,mean_diff,median_diff,statistic,p_value,reject_h0_holm_0.05
+treated_fraction,0.5,pehe,neural_rep,s_learner,10,-0.06291840197649373,-0.06536379683875868,3.0,0.009765625,True
+treated_fraction,0.5,pehe,neural_rep,t_learner,10,-0.4171090117882805,-0.42255651521649984,0.0,0.001953125,True
+treated_fraction,0.5,pehe,neural_rep,x_learner,10,-0.007285255654255684,-0.013336699014304593,22.0,0.625,False
+treated_fraction,0.25,pehe,neural_rep,s_learner,10,-0.06899100310198077,-0.0626497079563399,4.0,0.013671875,True
+treated_fraction,0.25,pehe,neural_rep,t_learner,10,-0.4318632853609817,-0.4347206223532419,0.0,0.001953125,True
+treated_fraction,0.25,pehe,neural_rep,x_learner,10,-0.014360218368889482,-0.011126869349442903,17.0,0.322265625,False
+treated_fraction,0.1,pehe,neural_rep,s_learner,10,-0.11686533962037286,-0.12891829413520772,0.0,0.001953125,True
+treated_fraction,0.1,pehe,neural_rep,t_learner,10,-0.6460983966033964,-0.6754099107587074,0.0,0.001953125,True
+treated_fraction,0.1,pehe,neural_rep,x_learner,10,-0.049397770186210666,-0.04145454414505384,9.0,0.064453125,False

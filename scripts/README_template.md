@@ -236,6 +236,12 @@ differences. These characterise how hard each condition is.
 ## 9. Statistical protocol
 
 - Replicates are independent seeds — for IHDP, distinct outcome realizations.
+- **All of Experiments 1–5 use 30 seeds**, fixed uniformly in advance rather
+  than tuned per experiment. Experiment 6 uses 10 seeds because it sweeps 20
+  hyper-parameter settings. An earlier 10-seed pass left several comparisons
+  near the significance boundary; the seed count was raised for *every*
+  experiment at once, not for the borderline ones, so no comparison was
+  selected for extra power on the basis of its result.
 - Reported as `mean ± SD (median)`. **The median matters here**: IHDP
   per-replicate errors are strongly right-skewed because a few realizations
   have very large outcome scales, so the mean is outlier-dominated.
