@@ -38,6 +38,7 @@ EXPERIMENTS: List[tuple[str, str, str]] = [
     ("ablation", "Experiment 5a — neural component ablation (IHDP)", "5a"),
     ("ablation_synthetic", "Experiment 5b — neural component ablation (synthetic)", "5b"),
     ("sensitivity", "Experiment 6 — hyper-parameter sensitivity (IHDP)", "6"),
+    ("fair_selection", "Experiment 7 — fair equal-budget model selection", "7"),
 ]
 
 MODEL_LABEL = {
@@ -114,6 +115,7 @@ def condition_label(df: pd.DataFrame) -> str:
         "treated_fraction": "treated fraction",
         "train_fraction": "train fraction",
         "ablation": "variant",
+        "scenario": "scenario",
     }.get(cond, cond)
 
 
@@ -179,6 +181,9 @@ def render(name: str, heading: str) -> str:
                 f"each condition)\n\n{sig}\n"
             )
 
+    if "selected_index" in df.columns and df["selected_index"].notna().any():
+        parts.append(selection_block(df))
+
     diag = diagnostics_table(df)
     if diag and df["condition"].iloc[0] != "ablation":
         parts.append(
@@ -191,6 +196,28 @@ def render(name: str, heading: str) -> str:
     if df["condition"].iloc[0] == "ablation":
         parts.append(ablation_delta_block(df))
     return "".join(parts)
+
+
+def selection_block(df: pd.DataFrame) -> str:
+    """Summarise which candidate configuration each model selected.
+
+    A model whose selection never varies is not being tuned; surfacing the
+    spread makes that visible directly in the README.
+    """
+    lines = [
+        "**Model-selection check** — configurations chosen by factual "
+        "validation MSE. A model whose selection never varies is not actually "
+        "being tuned, so the spread is reported.\n\n",
+        "| model | distinct configs chosen | candidates evaluated | mean tuning s |\n",
+        "|---|---|---|---|\n",
+    ]
+    for model, grp in df.groupby("model"):
+        lines.append(
+            f"| {MODEL_LABEL.get(model, model)} | {grp['selected_index'].nunique()} "
+            f"| {int(grp['n_configs_evaluated'].iloc[0])} "
+            f"| {grp['tuning_seconds'].mean():.1f} |\n"
+        )
+    return "".join(lines) + "\n"
 
 
 def ablation_delta_block(df: pd.DataFrame) -> str:

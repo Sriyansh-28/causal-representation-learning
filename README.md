@@ -199,6 +199,7 @@ Configurable: `hidden_dims`, `latent_dim`, `head_hidden_dims`, `dropout`,
 | 5a | Component ablation | IHDP | 4 variants | `configs/ablation.yaml` |
 | 5b | Component ablation | Synthetic | 4 variants | `configs/ablation_synthetic.yaml` |
 | 6 | Hyper-parameter sensitivity | IHDP | latent dim, weight decay, lr, epochs | `configs/sensitivity.yaml` |
+| 7 | **Fair model selection** | IHDP + synthetic | equal tuning budget for all 4 estimators, 5 scenarios | `configs/fair_selection.yaml` |
 
 **Controls applied uniformly.** Covariates are standardized on training
 statistics only; the outcome is standardized and predicted effects are rescaled
@@ -218,6 +219,32 @@ evaluation set.
 
 The `epochs` sweep in Experiment 6 disables early stopping automatically,
 otherwise the epoch budget would not actually vary.
+
+**Experiment 7 — fair model selection.** Experiments 1–6 gave the neural model
+adaptive capacity control (early stopping) while the meta-learners used fixed
+defaults, so their cross-model comparisons contrast *configured estimators*
+rather than modelling strategies. Experiment 7 equalises the budget:
+
+| Element | Setting |
+|---|---|
+| Scenarios | 5 — IHDP baseline, synthetic γ=0, γ=2, γ=3, synthetic 10% treated |
+| Seeds | 30 per scenario |
+| Models | S-, T-, X-Learner, NeuralRep |
+| Candidates per model | **6**, identical count for every estimator |
+| Validation split | Same train/validation partition, from the same seed, for every model |
+| Selection criterion | **Factual validation MSE** — error of the predicted outcome under the *observed* treatment |
+| PEHE in selection | **Never used.** It requires counterfactuals no practitioner observes; selecting on it would be oracle selection and would leak the evaluation target |
+| Neural early stopping | **Disabled.** The epoch budget (100/200/400) is a tuned hyper-parameter like any other |
+| After selection | Selected configuration refit on the **full** training set |
+| Evaluation | PEHE, absolute ATE error, policy regret on held-out test data |
+| Statistics | Paired Wilcoxon signed-rank, Holm-Bonferroni within scenario |
+
+The three meta-learners share one gradient-boosting grid so that differences
+among them stay attributable to meta-learning strategy. Selected configurations
+were re-instantiated and checked against the fitted estimators' actual
+attributes; per-model tuning and refit wall-clock times are recorded on every
+row, so the realised compute budget is reported rather than assumed equal
+(the budget is equal in *trials*, not in wall-clock).
 
 ## 8. Evaluation metrics
 
@@ -707,6 +734,81 @@ Replicates: 10 seeds. One parameter varied at a time around the baseline setting
 | 0.01 | 1.782 ± 3.262 (0.812) |
 
 
+### Experiment 7 — fair equal-budget model selection
+
+Replicates: 30 seeds. Cells are `mean ± SD (median)` across seeds; lower is better for PEHE, ATE error and policy regret.
+
+**PEHE**
+
+| scenario | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| ihdp_baseline | 4.118 ± 8.204 (1.283) | 2.775 ± 5.047 (0.943) | 3.749 ± 6.846 (1.214) | 1.402 ± 2.186 (0.717) |
+| synthetic_gamma0 | 0.433 ± 0.044 (0.429) | 0.860 ± 0.041 (0.859) | 0.427 ± 0.026 (0.422) | 0.578 ± 0.037 (0.584) |
+| synthetic_gamma2 | 0.688 ± 0.044 (0.680) | 0.933 ± 0.045 (0.934) | 0.581 ± 0.036 (0.582) | 0.610 ± 0.021 (0.604) |
+| synthetic_gamma3 | 0.773 ± 0.038 (0.766) | 0.983 ± 0.040 (0.983) | 0.634 ± 0.032 (0.633) | 0.623 ± 0.030 (0.622) |
+| synthetic_imbalance10 | 0.725 ± 0.087 (0.748) | 1.259 ± 0.083 (1.266) | 0.682 ± 0.074 (0.670) | 0.701 ± 0.061 (0.686) |
+
+**Absolute ATE error**
+
+| scenario | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| ihdp_baseline | 0.730 ± 1.639 (0.155) | 0.354 ± 0.683 (0.105) | 0.368 ± 0.476 (0.202) | 0.284 ± 0.583 (0.124) |
+| synthetic_gamma0 | 0.230 ± 0.055 (0.223) | 0.057 ± 0.030 (0.055) | 0.044 ± 0.026 (0.043) | 0.065 ± 0.038 (0.065) |
+| synthetic_gamma2 | 0.507 ± 0.049 (0.506) | 0.246 ± 0.075 (0.250) | 0.090 ± 0.059 (0.072) | 0.154 ± 0.055 (0.154) |
+| synthetic_gamma3 | 0.598 ± 0.044 (0.595) | 0.360 ± 0.098 (0.378) | 0.103 ± 0.063 (0.097) | 0.199 ± 0.076 (0.193) |
+| synthetic_imbalance10 | 0.534 ± 0.096 (0.547) | 0.256 ± 0.172 (0.232) | 0.149 ± 0.092 (0.138) | 0.257 ± 0.116 (0.247) |
+
+**Policy regret**
+
+| scenario | S-Learner | T-Learner | X-Learner | NeuralRep |
+|---|---|---|---|---|
+| ihdp_baseline | 0.186 ± 0.367 (0.062) | 0.090 ± 0.215 (0.030) | 0.201 ± 0.345 (0.091) | 0.020 ± 0.024 (0.011) |
+| synthetic_gamma0 | 0.008 ± 0.004 (0.008) | 0.095 ± 0.018 (0.093) | 0.019 ± 0.006 (0.019) | 0.008 ± 0.001 (0.008) |
+| synthetic_gamma2 | 0.009 ± 0.006 (0.008) | 0.145 ± 0.021 (0.145) | 0.040 ± 0.011 (0.038) | 0.009 ± 0.002 (0.008) |
+| synthetic_gamma3 | 0.011 ± 0.006 (0.009) | 0.179 ± 0.024 (0.179) | 0.047 ± 0.012 (0.048) | 0.010 ± 0.010 (0.009) |
+| synthetic_imbalance10 | 0.009 ± 0.008 (0.007) | 0.226 ± 0.063 (0.221) | 0.065 ± 0.033 (0.056) | 0.011 ± 0.007 (0.009) |
+
+**Paired Wilcoxon signed-rank tests on PEHE** (negative difference favours NeuralRep; Holm-corrected within each condition)
+
+| condition | NeuralRep vs | mean PEHE diff | p (Wilcoxon) | reject H0 (Holm 0.05) |
+|---|---|---|---|---|
+| ihdp_baseline | S-Learner | -2.715 | 0.0000 | yes |
+| ihdp_baseline | T-Learner | -1.373 | 0.0000 | yes |
+| ihdp_baseline | X-Learner | -2.347 | 0.0000 | yes |
+| synthetic_gamma0 | S-Learner | 0.145 | 0.0000 | yes |
+| synthetic_gamma0 | T-Learner | -0.283 | 0.0000 | yes |
+| synthetic_gamma0 | X-Learner | 0.151 | 0.0000 | yes |
+| synthetic_gamma2 | S-Learner | -0.079 | 0.0000 | yes |
+| synthetic_gamma2 | T-Learner | -0.323 | 0.0000 | yes |
+| synthetic_gamma2 | X-Learner | 0.028 | 0.0001 | yes |
+| synthetic_gamma3 | S-Learner | -0.150 | 0.0000 | yes |
+| synthetic_gamma3 | T-Learner | -0.360 | 0.0000 | yes |
+| synthetic_gamma3 | X-Learner | -0.010 | 0.1840 | no |
+| synthetic_imbalance10 | S-Learner | -0.023 | 0.0497 | no |
+| synthetic_imbalance10 | T-Learner | -0.557 | 0.0000 | yes |
+| synthetic_imbalance10 | X-Learner | 0.020 | 0.2621 | no |
+
+**Model-selection check** — configurations chosen by factual validation MSE. A model whose selection never varies is not actually being tuned, so the spread is reported.
+
+| model | distinct configs chosen | candidates evaluated | mean tuning s |
+|---|---|---|---|
+| NeuralRep | 6 | 6 | 35.7 |
+| S-Learner | 5 | 6 | 6.6 |
+| T-Learner | 6 | 6 | 6.7 |
+| X-Learner | 6 | 6 | 15.0 |
+
+**Manipulation check / design diagnostics** (mean over seeds). `true ATE` should stay constant across conditions — if it moves, error differences would be confounded with a shifting estimand.
+
+| condition | true ATE | treated frac | max SMD | P(e<0.1) | P(e>0.9) | PS KS |
+|---|---|---|---|---|---|---|
+| ihdp_baseline | 4.235 | 0.186 | 0.395 | 0.309 | 0.000 | 0.392 |
+| synthetic_gamma0 | 0.996 | 0.498 | 0.099 | 0.000 | 0.000 | 0.100 |
+| synthetic_gamma2 | 0.996 | 0.499 | 0.903 | 0.140 | 0.139 | 0.576 |
+| synthetic_gamma3 | 0.996 | 0.500 | 1.055 | 0.232 | 0.231 | 0.686 |
+| synthetic_imbalance10 | 0.996 | 0.098 | 0.637 | 0.656 | 0.000 | 0.398 |
+
+
+
 ---
 
 ## 11. Findings
@@ -715,71 +817,140 @@ Every claim below is traceable to a CSV under `results/`. Where a comparison
 was not statistically significant after Holm correction, it is reported as "no
 detectable difference" rather than as a win.
 
-### 11.1 The headline: conditional usefulness, not superiority
+**Read Experiment 7 first.** Experiments 1–6 gave the neural model adaptive
+capacity control (early stopping) while the meta-learners ran on fixed
+defaults. Experiment 7 removes that asymmetry, and it overturns the headline
+conclusion those experiments appeared to support. The subsections below are
+ordered accordingly.
 
-Across 153 Holm-corrected paired comparisons spanning three metrics
-(`results/tables/all_paired_comparisons.csv`), the neural model does **not**
-dominate:
+### 11.1 The headline: no reliable advantage under equal tuning budgets
 
-| Metric | Significant, favours NeuralRep | Significant, favours a meta-learner |
-|---|---|---|
-| PEHE | 39 | 5 |
-| Absolute ATE error | 18 | 12 |
-| Policy regret | 34 | 12 |
+Under an identical model-selection budget for all four estimators
+(Experiment 7, 30 seeds), the neural model does **not** outperform a tuned
+X-Learner on the synthetic benchmark:
 
-The pattern behind those counts is systematic, not noise. On the **synthetic**
-benchmark, three different estimators win three different metrics:
-
-- **NeuralRep** has the lowest PEHE — but only under design stress (see 11.2).
-- **X-Learner** has lower ATE error than NeuralRep in *every* synthetic
-  condition tested (all γ, all imbalance levels, all sample sizes; 12/12
-  significant).
-- **S-Learner** has lower policy regret than NeuralRep in *every* synthetic
-  condition tested (12/12 significant).
-
-On **IHDP**, by contrast, NeuralRep is never significantly beaten on any metric
-in any condition. IHDP is small (672 training units), heavily confounded, and
-18% treated — precisely the stressed regime identified in 11.2.
-
-### 11.2 When representation learning helps, and when it does not
-
-Experiment 2 produces a clean, well-powered **crossover** with the true ATE
-held constant at 0.9956 across all conditions:
-
-| γ | overlap (units with e<0.1 or e>0.9) | X-Learner PEHE | NeuralRep PEHE | Holm verdict |
+| Scenario | X-Learner PEHE | NeuralRep PEHE | Δ | Holm verdict |
 |---|---|---|---|---|
-| 0.0 | 0% | **0.431** | 0.474 | NeuralRep significantly **worse** (p<0.0001) |
-| 1.0 | 3.6% | 0.502 | 0.494 | no detectable difference (p=0.164) |
-| 2.0 | 27% | 0.580 | **0.538** | NeuralRep significantly **better** (p<0.0001) |
-| 3.0 | 45.5% | 0.628 | **0.558** | NeuralRep significantly **better** (p<0.0001) |
+| γ = 0 | **0.4269** | 0.5775 | +0.1506 | NeuralRep significantly **worse** (p<0.0001) |
+| γ = 2 | **0.5812** | 0.6096 | +0.0284 | NeuralRep significantly **worse** (p=0.0001) |
+| γ = 3 | 0.6336 | 0.6232 | −0.0104 | **no detectable difference** (p=0.184) |
+| 10% treated | 0.6819 | 0.7015 | +0.0196 | **no detectable difference** (p=0.262) |
 
-Under randomization the shared representation is a liability; under strong
-confounding and degraded overlap it is an advantage. Experiment 3 shows the
-same shape for imbalance: NeuralRep beats X-Learner on PEHE only at the
-strongest imbalance (10% treated, p=0.004), with no detectable difference at
-25% or 50%.
+On **absolute ATE error** the neural model is significantly worse than the
+X-Learner in every synthetic scenario, and the gap widens with confounding:
++47% at γ=0, +72% at γ=2, +93% at γ=3 (all p≤0.024).
 
-**Effect sizes are modest.** The significant PEHE gaps versus X-Learner are
-0.043–0.069 PEHE units on a base of roughly 0.5, i.e. 8–14% relative. These are
-consistent and well-powered, not large.
+The one scenario where the neural model leads under fair selection is **IHDP**,
+where it attains PEHE 1.402 ± 2.186 (median 0.717) against the X-Learner's
+3.749 ± 6.847 (median 1.214), p<0.0001. IHDP is small (672 training units),
+heavily confounded and ~18% treated. Its ATE-error advantage there is *not*
+significant (p=0.109).
 
-### 11.3 Sample size does not drive the result — design stress does
+### 11.2 The apparent confounding crossover did not survive fair selection
 
-The two sample-size experiments point in opposite directions, and the conflict
-is informative rather than contradictory:
+Experiment 2 (fixed hyper-parameters) appeared to show a crossover: the neural
+model overtaking the X-Learner on PEHE as confounding strength increased,
+significantly better at γ=2 and γ=3. **That result does not replicate once both
+models receive the same selection budget.** Under Experiment 7 the neural model
+is significantly *worse* at γ=0 and γ=2 and merely indistinguishable at γ=3 —
+there is no γ in the tested range at which it is significantly better.
+
+The direction of travel is still visible: the X-Learner's PEHE advantage
+narrows from +35.3% at γ=0 to a statistical tie at γ=3. But narrowing is not
+crossing, and **no PEHE advantage under confounding is claimed here**. The
+original crossover is best explained as an artifact of asymmetric tuning.
+
+The confounding manipulation itself remains valid and is reported in
+Experiment 2: with the true ATE held constant at 0.9956, maximum standardized
+mean difference rises 0.106 → 1.031 and the share of units in the propensity
+tails rises 0% → 45.5%. What Experiment 2 manipulates is **confounding
+strength, treatment-selection bias and overlap/positivity degradation** — not
+covariate shift as an independently controlled factor.
+
+### 11.3 Sample size does not drive the result
 
 | Benchmark | Regime | Relative PEHE improvement, 25% → 100% | Outcome at largest n |
 |---|---|---|---|
-| IHDP (168 → 672) | γ high, 18% treated | NeuralRep **−49%**, X-Learner −31% | NeuralRep significantly better |
-| Synthetic (2000 → 8000) | γ = 1.0, balanced | NeuralRep −26.7%, X-Learner **−35.6%** | X-Learner significantly better, gap **widening** with n |
+| IHDP (168 → 672) | high γ, 18% treated | NeuralRep **−49%**, X-Learner −31% | NeuralRep better (fixed hyper-parameters) |
+| Synthetic (2000 → 8000) | γ = 1.0, balanced | NeuralRep −26.7%, X-Learner **−35.6%** | X-Learner better, gap **widening** with n |
 
 More data does not rescue the neural model in an easy regime; it lets the
 X-Learner pull further ahead (Δ grows +0.037 → +0.048 as n goes 4000 → 8000).
-The determining factor across all experiments is the **difficulty of the
-design** — confounding strength and treatment imbalance — not the amount of
-data.
+Note both rows come from Experiments 4a/4b, which used fixed hyper-parameters;
+they were not re-run under fair selection.
 
-## 12. Ablation: which component actually matters
+## 12. Experiment 7 — fair model selection
+
+### 12.1 Motivation
+
+In Experiments 1–6 the neural model chose its own effective capacity via early
+stopping on a validation split, while S/T/X-Learners used fixed defaults with
+no tuning at all. Any cross-model result under that design compares *these
+particular configurations*, not the modelling strategies. Experiment 7 exists
+to determine which conclusions survive when the budget is equalised.
+
+### 12.2 Protocol
+
+For each (scenario, seed), every estimator receives:
+
+- the **same six candidate configurations** (`src/experiments/tuning.py`);
+- the **same train/validation split**, derived from the same seed;
+- the **same selection criterion**;
+- a **refit of the selected configuration on the full training set**;
+- **no adaptive early stopping** — the neural model's epoch budget (100/200/400)
+  is a tuned hyper-parameter like any other.
+
+The three meta-learners share one gradient-boosting grid, so differences among
+them remain attributable to meta-learning strategy rather than candidate sets.
+
+### 12.3 Why factual validation MSE, and why not PEHE
+
+Selection uses the mean squared error of the predicted outcome under each
+unit's **observed** treatment. PEHE cannot be used: it requires counterfactual
+outcomes that no practitioner observes, so selecting on it would be oracle
+selection and would leak the evaluation target into training. Factual outcome
+error is the only criterion computable from observable data. It is an imperfect
+proxy for CATE accuracy — imperfect *equally* for all four estimators, which is
+what makes the comparison fair.
+
+### 12.4 Validity correction
+
+A first execution of Experiment 7 was discarded. Meta-learner hyper-parameters
+were not reaching the underlying regressors: `build_learner` filtered the
+overrides, and the meta-learner constructors did not forward them to the base
+estimator. All six candidates were therefore identical, and only the neural
+model was genuinely tuned — biasing the comparison in the direction the
+experiment was designed to remove. The tell was that meta-learner results
+matched the untuned Experiment 2 numbers to four decimal places.
+
+Both defects were fixed, `tune_and_fit` now raises when every candidate scores
+identically, and twelve regression tests cover the forwarding path. Experiments
+1–6 were verified byte-identical after the fix (maximum change 0.00e+00), since
+they never passed overrides to meta-learners. The results reported here come
+solely from the corrected run.
+
+### 12.5 Verification
+
+- All 30 seeds present in every cell; identical seed sets across models within
+  each scenario; zero failed runs (59/59 statistical checks).
+- Selected configurations vary for **all four** models (5–6 distinct
+  configurations each), confirming that selection is doing real work.
+- Recorded `selected_config` values were re-instantiated and checked against
+  the fitted estimators' actual attributes — `n_estimators`, `max_depth`,
+  `learning_rate` for the meta-learners; `latent_dim`, `lr`, `weight_decay`,
+  `epochs` for the neural model — all match, with `early_stopping=False`
+  confirmed.
+- Meta-learner results now differ from the untuned Experiment 2 values in all
+  nine comparable cells.
+
+### 12.6 Conclusion
+
+The neural model's apparent advantage under confounding in Experiment 2 was an
+artifact of asymmetric model selection. Given equal budgets it does not
+outperform a tuned X-Learner on this synthetic DGP, on either PEHE or ATE
+error. Its advantage on IHDP persists under fair selection.
+
+## 13. Ablation: which component actually matters
 
 Experiment 5, 30 seeds, paired by seed, Holm-corrected within each metric.
 Positive Δ means removing the component made the model worse.
@@ -792,94 +963,94 @@ Positive Δ means removing the component made the model worse.
 | Learned representation | +6.3% (p=0.0020) | +16.2% (p<0.0001) |
 | Regularization (dropout + weight decay) | −2.5% (p=0.477, **ns**) | +1.2% (p=0.339, **ns**) |
 
-Three conclusions replicate across both benchmarks:
+In this implementation, **treatment-specific outcome heads contribute far more
+than the shared representation**. Removing the heads on IHDP more than doubles
+PEHE and inflates ATE error by 404%; removing the encoder costs 6.3%. The
+variant without separate heads is exactly a *neural S-Learner*, and its
+collapse mirrors the S-Learner's poor showing in Experiment 1 — an internally
+consistent cross-check.
 
-1. **The treatment-specific heads are the dominant component**, not the learned
-   representation. Removing them on IHDP more than doubles PEHE and inflates
-   ATE error by 404%. The variant without them is exactly a *neural
-   S-Learner*, and its collapse mirrors the S-Learner's poor showing in
-   Experiment 1 — an internally consistent cross-check.
-2. **The learned representation is a real but secondary contributor**, and its
-   importance *grows with data* (+6.3% on 672 units, +16.2% on 4000). This
-   coheres with the IHDP sample-size trend in 11.3.
-3. **Regularization is inert.** Dropout and weight decay are not significant on
-   any metric on either benchmark. Sensitivity analysis agrees: weight decay is
-   the least influential hyper-parameter examined (11.6% PEHE spread).
+The learned representation is a real but secondary contributor, and its
+importance grows with data (+6.3% on 672 units, +16.2% on 4000). Regularization
+is inert: not significant on any metric on either benchmark, which the
+sensitivity sweep corroborates (weight decay is the least influential
+hyper-parameter examined, 11.6% PEHE spread).
 
-**This partially contradicts the project's own framing.** The hypothesis was
-that a shared representation is the mechanism behind the neural model's
-behaviour. The evidence says the two-head architecture does most of the work,
-and the representation adds a smaller, genuine increment that matters more as
-data grows. That ordering is the single most important empirical result here.
+For a project premised on representation learning, this ordering is the most
+informative result obtained: the architectural separation of treatment arms,
+not the shared encoder, accounts for most of the model's behaviour.
 
-One caveat against over-reading: component contributions are metric-dependent.
-On synthetic data, removing the representation *improved* ATE error by 34%
-(p=0.064, ns) while tripling policy regret (+223%, p<0.0001).
+Two caveats. Component contributions are metric-dependent — on synthetic data,
+removing the representation *improved* ATE error by 34% (p=0.064, ns) while
+tripling policy regret. And the ablation was run with fixed hyper-parameters;
+it was not repeated under fair selection. Its internal comparison remains valid
+because all four variants share an identical training protocol, including
+early stopping.
 
-## 13. Sensitivity analysis
+## 14. Policy regret is not used as evidence here
 
-Experiment 6, IHDP, 10 seeds, one hyper-parameter varied at a time. Total PEHE
-spread across each swept range:
+The policy-value and policy-regret implementation was audited and is correct:
+manual recomputation matches the module to 0.00e+00, regret equals oracle value
+minus policy value, regret is non-negative, and the oracle dominates every
+learned and constant policy. Thirteen unit tests cover decision direction, sign
+inversion, threshold strictness, treatment-label consistency and baselines.
 
-| Hyper-parameter | Range swept | PEHE spread | Best value |
-|---|---|---|---|
-| Learning rate | 1e-4 → 1e-2 | **36.9%** | 0.005 |
-| Latent dimension | 4 → 64 | 17.3% | 16 |
-| Epochs | 25 → 400 | 15.5% | 200 |
-| Weight decay | 0 → 1e-2 | 11.6% | 0.01 |
+**The metric nevertheless lacks discriminating power in this DGP**, so no model
+ranking is drawn from it:
 
-Learning rate matters roughly three times as much as weight decay. Performance
-is flat between latent dimensions 8 and 64, so the representation's *width* is
-not critical — consistent with the ablation finding that the encoder is a
-secondary component. Results beyond 100 epochs are essentially flat, indicating
-the early-stopping budget is adequate rather than binding.
+- Only **~3.79%** of true treatment effects are negative, so treating everyone
+  is close to optimal.
+- The trivial **always-treat** policy already achieves regret **≈0.0082**.
+- The neural model's learned policy treats **≈100%** of units, so it
+  essentially reproduces always-treat, scoring 0.0083–0.0104.
+- The X-Learner, estimating effects more accurately, withholds treatment from
+  ~5% of units and is wrong often enough to score *worse* than the trivial
+  baseline.
 
-The reported baseline configuration (lr=0.001, latent_dim=32) is **not** the
-best setting found in this sweep (lr=0.005, latent_dim=16 were better). No
-result in this project was produced with a tuned configuration, and the
-baseline was fixed before the sweep was run.
+A low regret here therefore reflects a degenerate policy rather than better
+treatment decisions. Estimating τ(x) and choosing whom to treat are different
+problems: the policy depends only on sign(τ̂), not magnitude, so a model with
+large but uniformly positive errors can match the best constant policy. **No
+claim of superior policy performance is made for any model.** `evaluate_cate`
+now reports the always-treat and never-treat baselines and the learned policy's
+treated fraction so this degeneracy is visible directly in future results.
 
-## 14. Error analysis and limitations
+## 15. Error analysis and limitations
 
-### 14.1 Error structure
+### 15.1 Error structure
 
-Per-replicate IHDP errors are strongly right-skewed: NeuralRep's mean PEHE is
-2.008 but its median is 0.926, because a handful of realizations have very
-large outcome scales. All tables therefore report mean, SD *and* median, and
-all significance testing uses the rank-based Wilcoxon signed-rank test rather
-than a t-test. Mean and median occasionally disagree about the winner — on
-IHDP sample size, T-Learner has lower *median* ATE error than NeuralRep at
-three of four sizes while NeuralRep wins on the mean. Both are reported.
+Per-replicate IHDP errors are strongly right-skewed: under fair selection the
+neural model's mean PEHE is 1.402 but its median is 0.717, because a few
+realizations have very large outcome scales. All tables report mean, SD *and*
+median, and all significance testing uses the rank-based Wilcoxon signed-rank
+test rather than a t-test. Mean and median occasionally disagree about the
+winner; both are reported.
 
-### 14.2 Limitations
+### 15.2 Limitations
 
-1. **Hyper-parameter fairness is asymmetric — the most important caveat.**
-   NeuralRep receives adaptive model selection (early stopping on a 20%
-   validation split); the S/T/X-Learners use fixed default hyper-parameters
-   with no tuning. NeuralRep also therefore trains on 20% less data. Because of
-   this, cross-model results should be read as comparing *these configured
-   estimators*, not as isolating representation learning per se. The
-   Experiment 5 ablation is unaffected — every variant shares identical early
-   stopping — which is why the ablation, not the baseline comparison, carries
-   the mechanism claim.
-2. **No covariate-shift experiment exists.** Covariate shift between arms is a
-   consequence of the confounding manipulation, never an independently
-   manipulated factor. Nothing here demonstrates robustness to distribution
-   shift as such.
-3. **Unconfoundedness holds by construction** in both benchmarks; every
-   confounder is observed. Nothing here speaks to hidden confounding, and no
-   sensitivity analysis to unobserved confounding (e.g. Rosenbaum bounds) was
-   performed.
-4. **Two benchmarks only.** IHDP is a single small semi-synthetic dataset whose
-   quirks are well documented, and the synthetic DGP is one specific functional
-   form (partially linear with a mild nonlinearity). ACIC and other benchmarks
-   are supported by the framework but were not run.
-5. **Meta-learners use one base learner.** All three wrap gradient boosting;
-   conclusions about S/T/X may not transfer to other base regressors.
+1. **Weak sign heterogeneity makes policy evaluation uninformative.** With only
+   ~3.8% of effects negative, the decision problem is nearly trivial and
+   always-treat is near-optimal. A DGP with substantially more sign
+   heterogeneity would be required before policy regret could rank estimators.
+   This is the most consequential limitation for the decision-making question.
+2. **Two benchmarks only.** IHDP is a single small semi-synthetic dataset with
+   well-documented quirks, and the synthetic DGP is one specific functional form
+   (partially linear with a mild nonlinearity). ACIC and other benchmarks are
+   supported by the framework but were not run.
+3. **One base learner for all meta-learners.** S/T/X all wrap gradient
+   boosting; conclusions about them may not transfer to other base regressors.
+4. **No representation-balancing penalty.** The neural model is a plain
+   shared-encoder architecture. CFR/IPM-style balancing — the mechanism the
+   representation-learning literature actually proposes — was not implemented,
+   so this project tests shared representations, not balanced ones.
+5. **Experiments 1–6 retain the tuning asymmetry.** Experiment 7 corrects it for
+   five key scenarios, but the sample-size, ablation and sensitivity results
+   were not re-run under fair selection. Their cross-model comparisons should be
+   read with that caveat; the ablation's internal comparison is unaffected.
 6. **Experiment 6 uses 10 seeds**, not 30, and varies one hyper-parameter at a
-   time, so interactions between hyper-parameters are not explored.
-7. **Effect sizes are modest** where significant (8–14% relative PEHE), so
-   statistical significance should not be read as practical importance.
+   time, so hyper-parameter interactions are unexplored.
+7. **Effect sizes are modest** where significant, so statistical significance
+   should not be read as practical importance.
 
 
 ---

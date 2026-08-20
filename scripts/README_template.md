@@ -199,6 +199,7 @@ Configurable: `hidden_dims`, `latent_dim`, `head_hidden_dims`, `dropout`,
 | 5a | Component ablation | IHDP | 4 variants | `configs/ablation.yaml` |
 | 5b | Component ablation | Synthetic | 4 variants | `configs/ablation_synthetic.yaml` |
 | 6 | Hyper-parameter sensitivity | IHDP | latent dim, weight decay, lr, epochs | `configs/sensitivity.yaml` |
+| 7 | **Fair model selection** | IHDP + synthetic | equal tuning budget for all 4 estimators, 5 scenarios | `configs/fair_selection.yaml` |
 
 **Controls applied uniformly.** Covariates are standardized on training
 statistics only; the outcome is standardized and predicted effects are rescaled
@@ -218,6 +219,32 @@ evaluation set.
 
 The `epochs` sweep in Experiment 6 disables early stopping automatically,
 otherwise the epoch budget would not actually vary.
+
+**Experiment 7 — fair model selection.** Experiments 1–6 gave the neural model
+adaptive capacity control (early stopping) while the meta-learners used fixed
+defaults, so their cross-model comparisons contrast *configured estimators*
+rather than modelling strategies. Experiment 7 equalises the budget:
+
+| Element | Setting |
+|---|---|
+| Scenarios | 5 — IHDP baseline, synthetic γ=0, γ=2, γ=3, synthetic 10% treated |
+| Seeds | 30 per scenario |
+| Models | S-, T-, X-Learner, NeuralRep |
+| Candidates per model | **6**, identical count for every estimator |
+| Validation split | Same train/validation partition, from the same seed, for every model |
+| Selection criterion | **Factual validation MSE** — error of the predicted outcome under the *observed* treatment |
+| PEHE in selection | **Never used.** It requires counterfactuals no practitioner observes; selecting on it would be oracle selection and would leak the evaluation target |
+| Neural early stopping | **Disabled.** The epoch budget (100/200/400) is a tuned hyper-parameter like any other |
+| After selection | Selected configuration refit on the **full** training set |
+| Evaluation | PEHE, absolute ATE error, policy regret on held-out test data |
+| Statistics | Paired Wilcoxon signed-rank, Holm-Bonferroni within scenario |
+
+The three meta-learners share one gradient-boosting grid so that differences
+among them stay attributable to meta-learning strategy. Selected configurations
+were re-instantiated and checked against the fitted estimators' actual
+attributes; per-model tuning and refit wall-clock times are recorded on every
+row, so the realised compute budget is reported rather than assumed equal
+(the budget is equal in *trials*, not in wall-clock).
 
 ## 8. Evaluation metrics
 
